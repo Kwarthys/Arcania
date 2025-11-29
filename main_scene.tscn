@@ -1,0 +1,38 @@
+[gd_scene load_steps=4 format=3 uid="uid://btp0dvhkjxep"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_o3jxj"]
+vertex_color_use_as_albedo = true
+albedo_color = Color(0.1481536, 0.08014498, 0.060781255, 1)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_0f027"]
+material = SubResource("StandardMaterial3D_o3jxj")
+size = Vector2(50, 50)
+
+[sub_resource type="BoxMesh" id="BoxMesh_o3jxj"]
+
+[node name="MainScene" type="Node3D"]
+
+[node name="Scenery" type="Node3D" parent="."]
+
+[node name="Floor" type="MeshInstance3D" parent="Scenery"]
+mesh = SubResource("PlaneMesh_0f027")
+skeleton = NodePath("../..")
+
+[node name="Camera3D" type="Camera3D" parent="Scenery"]
+transform = Transform3D(1, 0, 0, 0, 0.68773407, 0.7259628, 0, -0.7259628, 0.68773407, 0, 15.158333, 15.001052)
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Scenery"]
+transform = Transform3D(-0.6507609, -0.6387083, 0.41056308, -3.7252907e-09, 0.54072493, 0.8411995, -0.75928277, 0.5474198, -0.3518826, 0, -15.079621, 0)
+light_energy = 1.5
+
+[node name="ReferenceCube" type="MeshInstance3D" parent="Scenery"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+mesh = SubResource("BoxMesh_o3jxj")
+
+[node name="Managers" type="Node" parent="."]
+
+[node name="GameUI" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
