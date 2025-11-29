@@ -1,4 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://btp0dvhkjxep"]
+[gd_scene load_steps=9 format=3 uid="uid://btp0dvhkjxep"]
+
+[ext_resource type="Script" uid="uid://d0c1dr5w4epx4" path="res://scripts/GameManager.cs" id="1_0f027"]
+[ext_resource type="SphereMesh" uid="uid://cx43tljd06fex" path="res://test_sphere_mesh.tres" id="1_2c62f"]
+[ext_resource type="Script" uid="uid://751yj3svkc4v" path="res://scripts/rotator.gd" id="1_gyfs4"]
+[ext_resource type="Script" uid="uid://daf82iewejgfu" path="res://scripts/fpsCounter.gd" id="4_d5x1h"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_o3jxj"]
 vertex_color_use_as_albedo = true
@@ -9,6 +14,10 @@ material = SubResource("StandardMaterial3D_o3jxj")
 size = Vector2(50, 50)
 
 [sub_resource type="BoxMesh" id="BoxMesh_o3jxj"]
+
+[sub_resource type="MultiMesh" id="MultiMesh_0f027"]
+transform_format = 1
+mesh = ExtResource("1_2c62f")
 
 [node name="MainScene" type="Node3D"]
 
@@ -28,11 +37,29 @@ light_energy = 1.5
 [node name="ReferenceCube" type="MeshInstance3D" parent="Scenery"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 mesh = SubResource("BoxMesh_o3jxj")
+script = ExtResource("1_gyfs4")
+
+[node name="MultiMeshInstance3D" type="MultiMeshInstance3D" parent="Scenery"]
+multimesh = SubResource("MultiMesh_0f027")
 
 [node name="Managers" type="Node" parent="."]
+
+[node name="GameManager" type="Node" parent="Managers" node_paths=PackedStringArray("multiMesh")]
+script = ExtResource("1_0f027")
+multiMesh = NodePath("../../Scenery/MultiMeshInstance3D")
 
 [node name="GameUI" type="Control" parent="."]
 layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
+
+[node name="fpsDisplay" type="RichTextLabel" parent="GameUI"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+text = "FPS: XXX"
+fit_content = true
+scroll_active = false
+autowrap_mode = 0
+script = ExtResource("4_d5x1h")
