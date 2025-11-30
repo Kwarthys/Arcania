@@ -19,12 +19,12 @@ public class EnemyManager
 		for(int i = 0; i < _numberOfUnit; ++i)
 		{
 			healths.Add(100.0f);
-			float posX = (GD.Randf() - 0.5f) * 50.0f;
-			float posY = (GD.Randf() - 0.5f) * 50.0f;
+			float posX = (GD.Randf() * GD.Randf() - 0.5f) * 50.0f;
+			float posY = (GD.Randf() * GD.Randf() - 0.5f) * 50.0f;
 			positions.Add(new(posX, posY));
 
 			float speedNormal = GD.Randf() * 5.0f + 0.2f;
-			speeds.Add(positions.Last().Normalized() * speedNormal * -1.0f);
+			speeds.Add(new Vector2(GD.Randf() - 0.5f, GD.Randf() - 0.5f).Normalized() * speedNormal);
 		}
 
 		count = _numberOfUnit;
@@ -35,12 +35,25 @@ public class EnemyManager
 		float dt = (float)_dt;
 		for(int i = 0; i < healths.Count; ++i)
 		{
-			positions[i] += speeds[i] * dt;
+			bool flipX = false;
+			bool flipY = false;
 
-			if(positions[i].LengthSquared() < 1.0f)
-			{
-				positions[i] = speeds[i] * -10.0f;
-			}
+			if(positions[i].X > 24.0f && speeds[i].X > 0.0f)
+				flipX = true;
+			else if(positions[i].X < -24.0f && speeds[i].X < 0.0f)
+				flipX = true;
+
+			if(positions[i].Y > 24.0f && speeds[i].Y > 0.0f)
+				flipY = true;
+			else if(positions[i].Y < -24.0f && speeds[i].Y < 0.0f)
+				flipY = true;
+
+			if(flipX || flipY)
+				speeds[i] = new(speeds[i].X * (flipX ? -1.0f : 1.0f), speeds[i].Y * (flipY ? -1.0f : 1.0f));
+
+			positions[i] += speeds[i] * dt;
 		}
 	}
+
+	public Vector2 GetPosition(int _id) { return positions[_id]; }
 }
