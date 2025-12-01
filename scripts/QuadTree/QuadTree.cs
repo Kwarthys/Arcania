@@ -37,12 +37,14 @@ public class QuadTree
     }
 
     public void SubmitElement(int _id, Vector2 _position) { root.SubmitElement(_id, _position); }
-    public void CheckDepartures(ref List<int> _removedIndices) { root.CheckDepartures(ref _removedIndices); }
+    public void CheckDepartures(List<int> _removedIndices) { root.CheckDepartures(_removedIndices); }
+    public void GetElementsIn(QuadTree.TreeBox _box, List<int> _elements) { root.GetElementsIn(_box, _elements); }
     public void CheckTrim() { root.CheckTrim(); }
 
     public void DrawDebug()
     {
-        QuadTreeDebugManager.Reset(); root.DrawDebug();
+        QuadTreeDebugManager.Reset();
+        root.DrawDebug();
     }
 
 }

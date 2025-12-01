@@ -80,7 +80,26 @@ public class TreeCell
         }
     }
 
-    public void CheckDepartures(ref List<int> _removedIndices)
+    public void GetElementsIn(QuadTree.TreeBox _box, List<int> _elements)
+    {
+        if(Intersects(_box) == false)
+            return;
+
+        if(children[0] == null)
+        {
+            _elements.AddRange(elementsIndices);
+            return;
+        }
+        else
+        {
+            for(int i = 0; i < 4; ++i)
+            {
+                children[i].GetElementsIn(_box, _elements);
+            }
+        }
+    }
+
+    public void CheckDepartures(List<int> _removedIndices)
     {
         if(children[0] == null)
         {
@@ -98,7 +117,7 @@ public class TreeCell
         else
         {
             for(int i = 0; i < 4; ++i)
-                children[i].CheckDepartures(ref _removedIndices);
+                children[i].CheckDepartures(_removedIndices);
         }
     }
 
@@ -108,6 +127,12 @@ public class TreeCell
         && _position.Y > boundingBox.y                          // Y not before its start
         && _position.X < boundingBox.x + boundingBox.w          // X not after its end
         && _position.Y < boundingBox.y + boundingBox.h;         // Y not after its end
+    }
+
+    public bool Intersects(QuadTree.TreeBox _box)
+    {
+        return _box.x < boundingBox.x + boundingBox.w && _box.y < boundingBox.y + boundingBox.h // other box' start is before our end
+            && _box.x + _box.w > boundingBox.x && _box.y + _box.h > boundingBox.y;              // other box's end is after our start
     }
 
     private bool SubmitToChildren(int _id, Vector2 _position)

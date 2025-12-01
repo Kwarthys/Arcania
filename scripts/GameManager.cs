@@ -36,7 +36,7 @@ public partial class GameManager : Node
 		enemyManager.Update(_dt);
 
 		List<int> orphanIndices = new();
-		tree.CheckDepartures(ref orphanIndices);
+		tree.CheckDepartures(orphanIndices);
 
 		orphanIndices.ForEach((id) => tree.SubmitElement(id, enemyManager.positions[id]));
 
