@@ -1,0 +1,52 @@
+{
+	"Buildings":
+	[
+		{
+			"Name" : "BasicTower",
+			"Health" : 100,
+			"Footprint": { "X": 1, "Y":1},
+			"Cost":
+			{
+				"Mana": 100
+			},
+			"Weapons":
+			[
+				{
+					"Type": "Projectile",
+					"Cost": { "Mana": 10 },
+					"Range": 20,
+					"Effects":
+					[
+						{
+							"Magic": "Arcane",
+							"Damage": 60,
+							"Effects":
+							[
+								{
+									"Magic": "Arcane",
+									"Area" : 3,
+									"Damage" : 10,
+									"Affects" : "Hostile"
+								}
+							]
+						}
+					]
+				}
+			]
+		},
+		{
+			"Name": "BasicHarvester",
+			"Health": 50,
+			"Footprint" : {"X":3, "Y":3},
+			"Cost": {"Mana": 20},
+			"Effects":
+			[
+				{
+					"Gain": {"Mana": 1},
+					"Cost": {"Mana": 0, "Fire": 0, "Elec":0, "Stone":0},
+					"Period": 2
+				}
+			]
+		}
+	]
+}

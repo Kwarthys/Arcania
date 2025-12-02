@@ -10,6 +10,10 @@ public partial class GameManager : Node
 	private double dtCounter = 0.0;
 	[Export] private double trimCheckTimer = 5.0;
 
+	[Export] private string BuildingsDataPath;
+
+	private BuildingsManager buildingsManager = new();
+
 	private QuadTree tree;
 
 	public override void _Ready()
@@ -28,6 +32,7 @@ public partial class GameManager : Node
 			tree.SubmitElement(i, enemyManager.positions[i]);
 		}
 
+		buildingsManager.LoadData(BuildingsDataPath);
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.

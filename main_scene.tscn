@@ -53,6 +53,7 @@ multimesh = SubResource("MultiMesh_0f027")
 [node name="GameManager" type="Node" parent="Managers" node_paths=PackedStringArray("multiMesh")]
 script = ExtResource("1_0f027")
 multiMesh = NodePath("../../Scenery/MultiMeshInstance3D")
+BuildingsDataPath = "res://ConfigFiles/BuildingsData.json"
 
 [node name="QuadTreeDebugManager" type="Node" parent="Managers"]
 script = ExtResource("4_8mm7a")
