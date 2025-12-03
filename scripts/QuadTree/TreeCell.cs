@@ -192,7 +192,7 @@ public class TreeCell
         Vector3 c = new(boundingBox.x + boundingBox.w, height, boundingBox.y + boundingBox.h);
         Vector3 d = new(boundingBox.x, height, boundingBox.y + boundingBox.h);
 
-        QuadTreeDebugManager.DebugDrawSquare(a, b, c, d);
+        DrawDebugManager.DebugDrawSquare(a, b, c, d);
 
         if(children[0] == null)
             return;

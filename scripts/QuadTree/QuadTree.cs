@@ -24,6 +24,14 @@ public class QuadTree
             h = _h;
         }
 
+        public TreeBox(float _xCenter, float _yCenter, float _radius)
+        {
+            x = _xCenter - _radius;
+            y = _yCenter - _radius;
+            w = 2.0f * _radius;
+            h = w;
+        }
+
         public override string ToString()
         {
             return x + ", " + y + " | " + w + ", " + h;
@@ -38,13 +46,15 @@ public class QuadTree
 
     public void SubmitElement(int _id, Vector2 _position) { root.SubmitElement(_id, _position); }
     public void CheckDepartures(List<int> _removedIndices) { root.CheckDepartures(_removedIndices); }
-    public void GetElementsIn(QuadTree.TreeBox _box, List<int> _elements) { root.GetElementsIn(_box, _elements); }
     public void CheckTrim() { root.CheckTrim(); }
+    public void DrawDebug() { root.DrawDebug(); }
 
-    public void DrawDebug()
+    public List<int> GetElementsIn(TreeBox _box)
     {
-        QuadTreeDebugManager.Reset();
-        root.DrawDebug();
+        List<int> elements = new();
+        root.GetElementsIn(_box, elements);
+        return elements;
     }
+
 
 }

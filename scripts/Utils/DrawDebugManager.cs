@@ -3,9 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-public partial class QuadTreeDebugManager : Node
+public partial class DrawDebugManager : Node
 {
-	public static QuadTreeDebugManager Instance;
+	public static DrawDebugManager Instance;
 	[Export] private StandardMaterial3D debugMaterial;
 	public override void _Ready()
 	{
@@ -21,20 +21,16 @@ public partial class QuadTreeDebugManager : Node
 		Instance?.DrawSquare(_a, _b, _c, _d);
 	}
 
-	public void DrawSquare(Vector3 _a, Vector3 _b, Vector3 _c, Vector3 _d)
+	public static void DebugDrawLine(Vector3 _a, Vector3 _b)
 	{
-		if(surfacePerMeshCounter + 1 >= 256) // MAX_MESH_SURFACE = 256
-		{
-			currentMeshIndex++;
-			surfacePerMeshCounter = 0;
-		}
+		Instance?.DrawLine(_a, _b);
+	}
 
-		ImmediateMesh mesh;
+	public static void Reset() { Instance?.DoReset(); }
 
-		if(currentMeshIndex >= debugMeshes.Count)
-			mesh = InstantiateNewMesh();
-		else
-			mesh = debugMeshes[currentMeshIndex];
+	private void DrawSquare(Vector3 _a, Vector3 _b, Vector3 _c, Vector3 _d)
+	{
+		ImmediateMesh mesh = GetDrawMesh();
 
 		mesh.SurfaceBegin(Mesh.PrimitiveType.Lines, debugMaterial);
 
@@ -51,13 +47,35 @@ public partial class QuadTreeDebugManager : Node
 		mesh.SurfaceAddVertex(_a);
 
 		mesh.SurfaceEnd();
-
-		surfacePerMeshCounter++;
 	}
 
-	public static void Reset() { Instance?.DoReset(); }
+	private void DrawLine(Vector3 _a, Vector3 _b)
+	{
+		ImmediateMesh mesh = GetDrawMesh();
+		mesh.SurfaceBegin(Mesh.PrimitiveType.Lines, debugMaterial);
+		mesh.SurfaceAddVertex(_a);
+		mesh.SurfaceAddVertex(_b);
+		mesh.SurfaceEnd();
+	}
 
-	public void DoReset()
+	private ImmediateMesh GetDrawMesh()
+	{
+		if(surfacePerMeshCounter + 1 >= 256) // MAX_MESH_SURFACE = 256
+		{
+			currentMeshIndex++;
+			surfacePerMeshCounter = 0;
+		}
+
+		surfacePerMeshCounter++;
+
+		if(currentMeshIndex >= debugMeshes.Count)
+			return InstantiateNewMesh();
+		else
+			return debugMeshes[currentMeshIndex];
+	}
+
+
+	private void DoReset()
 	{
 		surfacePerMeshCounter = 0;
 		currentMeshIndex = 0;

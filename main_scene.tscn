@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://d0c1dr5w4epx4" path="res://scripts/GameManager.cs" id="1_0f027"]
 [ext_resource type="SphereMesh" uid="uid://cx43tljd06fex" path="res://test_sphere_mesh.tres" id="1_2c62f"]
 [ext_resource type="Script" uid="uid://751yj3svkc4v" path="res://scripts/rotator.gd" id="1_gyfs4"]
-[ext_resource type="Script" uid="uid://dk8q0aajeogni" path="res://scripts/QuadTreeDebugManager.cs" id="4_8mm7a"]
+[ext_resource type="Script" uid="uid://dk8q0aajeogni" path="res://scripts/Utils/DrawDebugManager.cs" id="4_8mm7a"]
 [ext_resource type="Script" uid="uid://daf82iewejgfu" path="res://scripts/fpsCounter.gd" id="4_d5x1h"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_o3jxj"]
@@ -34,14 +34,14 @@ mesh = SubResource("PlaneMesh_0f027")
 skeleton = NodePath("../..")
 
 [node name="Camera3D" type="Camera3D" parent="Scenery"]
-transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 37.060818, 0)
+transform = Transform3D(-4.3711385e-08, -0.96736515, 0.25338653, 8.881784e-16, 0.2533865, 0.96736526, -0.99999994, 4.2284874e-08, -1.1075876e-08, 13.75087, 34.19224, 4.3009018e-06)
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="Scenery"]
 transform = Transform3D(-0.6507609, -0.6387083, 0.41056308, -3.7252907e-09, 0.54072493, 0.8411995, -0.75928277, 0.5474198, -0.3518826, 0, -15.079621, 0)
 light_energy = 1.5
 
 [node name="ReferenceCube" type="MeshInstance3D" parent="Scenery"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10, 0)
 mesh = SubResource("BoxMesh_o3jxj")
 script = ExtResource("1_gyfs4")
 

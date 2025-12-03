@@ -11,6 +11,7 @@ public partial class GameManager : Node
 	[Export] private double trimCheckTimer = 5.0;
 
 	[Export] private string BuildingsDataPath;
+	[Export] bool drawTreeDebug = false;
 
 	private BuildingsManager buildingsManager = new();
 
@@ -32,20 +33,26 @@ public partial class GameManager : Node
 			tree.SubmitElement(i, enemyManager.positions[i]);
 		}
 
+		buildingsManager.Initialize(enemyManager, tree);
 		buildingsManager.LoadData(BuildingsDataPath);
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double _dt)
 	{
+		DrawDebugManager.Reset();
+
 		enemyManager.Update(_dt);
+		buildingsManager.Update(_dt);
 
 		List<int> orphanIndices = new();
 		tree.CheckDepartures(orphanIndices);
 
 		orphanIndices.ForEach((id) => tree.SubmitElement(id, enemyManager.positions[id]));
 
-		tree.DrawDebug();
+
+		if(drawTreeDebug)
+			tree.DrawDebug();
 
 		for(int i = 0; i < enemyManager.count; ++i)
 		{
