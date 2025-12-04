@@ -11,6 +11,7 @@ public partial class GameManager : Node
 	[Export] private double trimCheckTimer = 5.0;
 
 	[Export] private string BuildingsDataPath;
+	[Export] private PackedScene turretModel;
 	[Export] bool drawTreeDebug = false;
 
 	private BuildingsManager buildingsManager = new();
@@ -35,6 +36,13 @@ public partial class GameManager : Node
 
 		buildingsManager.Initialize(enemyManager, tree);
 		buildingsManager.LoadData(BuildingsDataPath);
+
+		foreach(Building b in buildingsManager.buildings)
+		{
+			Node3D turret = turretModel.Instantiate<Node3D>();
+			turret.Position = new(b.position.X, 0.0f, b.position.Y);
+			AddChild(turret);
+		}
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -50,13 +58,17 @@ public partial class GameManager : Node
 
 		orphanIndices.ForEach((id) => tree.SubmitElement(id, enemyManager.positions[id]));
 
-
 		if(drawTreeDebug)
 			tree.DrawDebug();
 
 		for(int i = 0; i < enemyManager.count; ++i)
 		{
-			Vector3 pos = new(enemyManager.positions[i].X, 0.5f, enemyManager.positions[i].Y);
+			Vector3 pos;
+			if(enemyManager.healths[i] > 0.0)
+				pos = new(enemyManager.positions[i].X, 0.5f, enemyManager.positions[i].Y);
+			else
+				pos = new(0.0f, -1.0f, 0.0f); // Dead, hide it below ground
+
 			multiMesh.Multimesh.SetInstanceTransform(i, new Transform3D(Basis.Identity, pos));
 		}
 

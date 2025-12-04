@@ -5,9 +5,10 @@ using System.Linq;
 
 public class BuildingsManager
 {
+	private PackedScene turretModel;
 	private EnemyManager enemyManager = null;
 	private QuadTree tree = null;
-	private List<Building> buildings = new();
+	public List<Building> buildings { get; private set; } = new();
 	public void LoadData(string _path)
 	{
 		JSONFormats.BuildingsData data = JSONManager.Read<JSONFormats.BuildingsData>(_path);
@@ -24,10 +25,10 @@ public class BuildingsManager
 		enemyManager = _enemyManager;
 		tree = _tree;
 
-		for(int i = 0; i < 100; ++i)
+		for(int i = 0; i < 15; ++i)
 		{
 			buildings.Add(new());
-			buildings.Last().position = new(GD.RandRange(-20, 20), GD.RandRange(-20, 20));
+			buildings.Last().position = new(GD.RandRange(-30, 30), GD.RandRange(-30, 30));
 		}
 	}
 
@@ -71,12 +72,12 @@ public class BuildingsManager
 			if(b.targetIndex != -1)
 			{
 				Vector2 targetPos = enemyManager.GetPosition(b.targetIndex);
-				DrawDebugManager.DebugDrawLine(new(b.position.X, 10.0f, b.position.Y), new(targetPos.X, 0.5f, targetPos.Y));
+				DrawDebugManager.DebugDrawLine(new(b.position.X, 7.0f, b.position.Y), new(targetPos.X, 0.5f, targetPos.Y));
 
 				if(justUpdatedTarget == false) // don't dist check if we got it this frame as we just did it
 				{
 					// Range check as it might have moved
-					if(enemyManager.GetPosition(b.targetIndex).DistanceSquaredTo(b.position) > b.range * b.range)
+					if(enemyManager.GetHealth(b.targetIndex) <= 0.0 || enemyManager.GetPosition(b.targetIndex).DistanceSquaredTo(b.position) > b.range * b.range)
 					{
 						b.targetIndex = -1;
 						continue; // we lost our target, wait for next update to find another one
@@ -88,6 +89,7 @@ public class BuildingsManager
 				{
 					// shoot !
 					b.fireDTCounter = 0.0;
+					enemyManager.Damage(b.targetIndex, b.damage);
 				}
 			}
 		}

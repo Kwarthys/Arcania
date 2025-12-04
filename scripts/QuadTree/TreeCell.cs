@@ -106,11 +106,18 @@ public class TreeCell
             for(int i = elementsIndices.Count - 1; i >= 0; i--)
             {
                 int id = elementsIndices[i];
+
+                if(unitsManager.GetHealth(id) <= 0.0)
+                {
+                    elementsIndices.RemoveAt(i); // don't add to removed as it does not need to be reinserted
+                    continue;
+                }
+
                 Vector2 pos = unitsManager.GetPosition(id);
                 if(Contains(pos))
                     continue;
 
-                elementsIndices.Remove(id);
+                elementsIndices.RemoveAt(i);
                 _removedIndices.Add(id);
             }
         }

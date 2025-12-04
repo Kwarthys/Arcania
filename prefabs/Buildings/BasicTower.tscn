@@ -1,0 +1,18 @@
+[gd_scene load_steps=3 format=3 uid="uid://cbfq7hji05gf8"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_wjb6b"]
+size = Vector3(1, 6, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_wjb6b"]
+
+[node name="BasicTower" type="Node3D"]
+
+[node name="Base" type="Node3D" parent="."]
+
+[node name="Tower" type="MeshInstance3D" parent="Base"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 0)
+mesh = SubResource("BoxMesh_wjb6b")
+
+[node name="Turret" type="MeshInstance3D" parent="Base"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7, 0)
+mesh = SubResource("SphereMesh_wjb6b")

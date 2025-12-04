@@ -35,6 +35,9 @@ public class EnemyManager
 		float dt = (float)_dt;
 		for(int i = 0; i < healths.Count; ++i)
 		{
+			if(healths[i] <= 0.0)
+				continue;
+
 			bool flipX = false;
 			bool flipY = false;
 
@@ -55,5 +58,15 @@ public class EnemyManager
 		}
 	}
 
+	public void Damage(List<int> _ids, float _amount) { _ids.ForEach((id) => Damage(id, _amount)); }
+
+	public void Damage(int _id, float _amount)
+	{
+		healths[_id] -= _amount;
+		// if health < 0.0 -> killed
+	}
+
 	public Vector2 GetPosition(int _id) { return positions[_id]; }
+	public float GetHealth(int _id) { return healths[_id]; }
+	public bool Alive(int _id) { return healths[_id] > 0.0; }
 }

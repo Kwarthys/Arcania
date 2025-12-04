@@ -7,6 +7,6 @@ public class Building
 	public float range = 5.0f;
 	public float damage = 100.0f;
 	public double fireDTCounter = 0.0;
-	public float firePeriod = 2.0f;
+	public float firePeriod = 0.3f;
 	public int targetIndex = -1;
 }
