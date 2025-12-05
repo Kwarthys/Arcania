@@ -35,14 +35,17 @@ mesh = SubResource("PlaneMesh_0f027")
 skeleton = NodePath("../..")
 
 [node name="Camera3D" type="Camera3D" parent="Scenery"]
-transform = Transform3D(-4.3711385e-08, -0.6779417, 0.7351159, 0, 0.7351157, 0.6779418, -0.99999994, 2.9633771e-08, -3.2132935e-08, 32.63922, 20.761045, 4.3009018e-06)
+transform = Transform3D(-4.371139e-08, -0.6779417, 0.7351157, 0, 0.7351157, 0.67794174, -1, 2.9633773e-08, -3.213293e-08, 31.680582, 19.875137, 4.3009018e-06)
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="Scenery"]
-transform = Transform3D(-0.6507609, -0.6387083, 0.41056308, -3.7252907e-09, 0.54072493, 0.8411995, -0.75928277, 0.5474198, -0.3518826, 0, -15.079621, 0)
+transform = Transform3D(-0.45723367, -0.69265246, 0.55782586, -0.06774481, 0.6525349, 0.75472456, -0.8867629, 0.30729553, -0.34528482, 0, 19.137554, 0)
 light_energy = 1.5
+shadow_enabled = true
+directional_shadow_mode = 1
+directional_shadow_max_distance = 500.0
 
 [node name="ReferenceCube" type="MeshInstance3D" parent="Scenery"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.9349983, 0)
 mesh = SubResource("BoxMesh_o3jxj")
 script = ExtResource("1_gyfs4")
 
