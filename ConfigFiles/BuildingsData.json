@@ -39,14 +39,11 @@
 			"Health": 50,
 			"Footprint" : {"X":3, "Y":3},
 			"Cost": {"Mana": 20},
-			"Effects":
-			[
-				{
-					"Gain": {"Mana": 1},
-					"Cost": {"Mana": 0, "Fire": 0, "Elec":0, "Stone":0},
-					"Period": 2
-				}
-			]
+			"Economy":
+			{
+				"Gain": {"Mana": 1},
+				"Cost": {"Mana": 0, "Fire": 0, "Elec":0, "Stone":0}
+			}
 		}
 	]
 }
