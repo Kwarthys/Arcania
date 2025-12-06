@@ -24,12 +24,12 @@ public class BuildingsManager
 	{
 		enemyManager = _enemyManager;
 		tree = _tree;
+	}
 
-		for(int i = 0; i < 15; ++i)
-		{
-			buildings.Add(new());
-			buildings.Last().position = new(GD.RandRange(-30, 30), GD.RandRange(-30, 30));
-		}
+	public void AddBuilding(Vector2I _pos)
+	{
+		buildings.Add(new());
+		buildings.Last().position = _pos;
 	}
 
 	public void Update(double _dt)

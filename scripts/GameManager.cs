@@ -81,4 +81,14 @@ public partial class GameManager : Node
 			dtCounter = 0.0;
 		}
 	}
+
+	public void AddBuilding(Vector3 _pos)
+	{
+		Vector2I pos = new(Mathf.FloorToInt(_pos.X), Mathf.FloorToInt(_pos.Z));
+		buildingsManager.AddBuilding(pos);
+
+		Node3D turret = turretModel.Instantiate<Node3D>();
+		turret.Position = new(pos.X, 0.0f, pos.Y);
+		AddChild(turret);
+	}
 }
