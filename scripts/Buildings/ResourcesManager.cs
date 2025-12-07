@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 public class ResourcesManager
 {
-	public Price playerResources { get; private set; } = new();
+	public Price playerResources = new();
 
 	public bool Afford(Price _p) { return playerResources >= _p; }
 	public void Pay(Price _p) { playerResources -= _p; }
@@ -69,6 +69,14 @@ public class Price
 		return _a + -_b;
 	}
 
+	public static Price operator *(Price _p, float _coef)
+	{
+		Price r = new();
+		foreach(KeyValuePair<ResourcesManager.Resource, float> pair in _p.amounts)
+			r[pair.Key] = _p[pair.Key] * _coef;
+		return r;
+	}
+
 	public static bool operator >=(Price _a, Price _b)
 	{
 		foreach(KeyValuePair<ResourcesManager.Resource, float> pair in _a.amounts)
@@ -84,6 +92,26 @@ public class Price
 		foreach(KeyValuePair<ResourcesManager.Resource, float> pair in _a.amounts)
 		{
 			if(pair.Value > _b[pair.Key])
+				return false;
+		}
+		return true;
+	}
+
+	public static bool operator true(Price _p)
+	{
+		foreach(KeyValuePair<ResourcesManager.Resource, float> pair in _p.amounts)
+		{
+			if(Mathf.Abs(pair.Value) < Mathf.Epsilon)
+				return false;
+		}
+		return true;
+	}
+
+	public static bool operator false(Price _p)
+	{
+		foreach(KeyValuePair<ResourcesManager.Resource, float> pair in _p.amounts)
+		{
+			if(Mathf.Abs(pair.Value) > Mathf.Epsilon)
 				return false;
 		}
 		return true;

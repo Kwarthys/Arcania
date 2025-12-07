@@ -100,4 +100,21 @@ public class Refiner
 	public Price delta = new(1.0f, 0.0f, 0.0f, 0.0f);
 	public float period = 1.0f;
 	public float activityRatio = 1.0f;
+	private double dtCounter = 0.0f;
+
+	public void Update(double _dt, ref Price _playerResources)
+	{
+		if(dtCounter < period)
+		{
+			dtCounter += _dt;
+			return;
+		}
+
+		Price actualDelta = delta * activityRatio;
+		if(_playerResources >= -actualDelta)
+		{
+			_playerResources += delta * activityRatio;
+			dtCounter = 0.0;
+		}
+	}
 }

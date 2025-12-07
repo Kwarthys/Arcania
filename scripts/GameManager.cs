@@ -1,21 +1,20 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.Resources;
 
 public partial class GameManager : Node
 {
-	private EnemyManager enemyManager = new();
 	[Export] private MultiMeshInstance3D multiMesh;
-
-	private double dtCounter = 0.0;
 	[Export] private double trimCheckTimer = 5.0;
-
 	[Export] private string BuildingsDataPath;
 	[Export] private PackedScene turretModel;
 	[Export] private PackedScene harvesterModel;
 	[Export] bool drawTreeDebug = false;
-
 	private BuildingsManager buildingsManager = new();
+	private EnemyManager enemyManager = new();
+	private ResourcesManager resourcesManager = new();
+	private double dtCounter = 0.0;
 
 	private QuadTree tree;
 
@@ -29,7 +28,7 @@ public partial class GameManager : Node
 		for(int i = 0; i < enemyManager.count; ++i)
 			tree.SubmitElement(i, enemyManager.GetPosition(i));
 
-		buildingsManager.Initialize(enemyManager, tree);
+		buildingsManager.Initialize(enemyManager, resourcesManager, tree);
 		buildingsManager.LoadData(BuildingsDataPath);
 
 		foreach(Building b in buildingsManager.buildings)
@@ -48,6 +47,8 @@ public partial class GameManager : Node
 
 		enemyManager.Update(_dt);
 		buildingsManager.Update(_dt);
+
+		ResourceDisplayManager.Instance.Update(resourcesManager.playerResources);
 
 		List<int> orphanIndices = new();
 		tree.CheckDepartures(orphanIndices);
@@ -83,13 +84,23 @@ public partial class GameManager : Node
 		}
 	}
 
-	public void AddBuilding(Vector3 _pos)
+	public void AddBuilding(Vector3 _pos, bool _tower)
 	{
 		Vector2I pos = new(Mathf.FloorToInt(_pos.X), Mathf.FloorToInt(_pos.Z));
-		buildingsManager.AddBuilding(pos);
+		Node3D model;
+		if(_tower)
+		{
+			model = turretModel.Instantiate<Node3D>();
+			buildingsManager.AddTower(pos);
 
-		Node3D turret = turretModel.Instantiate<Node3D>();
-		turret.Position = new(pos.X, 0.0f, pos.Y);
-		AddChild(turret);
+		}
+		else
+		{
+			model = harvesterModel.Instantiate<Node3D>();
+			buildingsManager.AddHarvester(pos);
+		}
+
+		model.Position = new(pos.X, 0.0f, pos.Y);
+		AddChild(model);
 	}
 }

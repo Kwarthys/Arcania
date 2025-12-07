@@ -150,7 +150,7 @@ public class TreeCell
                 return true; // Get out once a child took the element
         }
 
-        GD.PrintErr("TreeCell.SubmitToChildren: No children took care of an element");
+        GD.PrintErr("TreeCell.SubmitToChildren: No children took care of element " + _id);
         return false;
     }
 
@@ -182,7 +182,7 @@ public class TreeCell
                     return; // Get out once a child took the element
             }
 
-            GD.PrintErr("TreeCell.Split.ForEach: No children took care of an element");
+            GD.PrintErr("TreeCell.Split.ForEach: No children took care of element " + id);
         });
 
         elementsIndices.Clear();

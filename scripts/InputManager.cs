@@ -9,7 +9,9 @@ public partial class InputManager : Node3D
 
 	public override void _UnhandledInput(InputEvent @event)
 	{
-		if(@event.IsActionReleased("MainInteraction"))
+		bool isMain = @event.IsActionReleased("MainInteraction");
+		bool isSec = @event.IsActionReleased("SecondaryInteraction");
+		if(isMain || isSec)
 		{
 			Vector2 mousePos = GetViewport().GetMousePosition();
 			Vector3 from = camera.ProjectRayOrigin(mousePos);
@@ -27,7 +29,7 @@ public partial class InputManager : Node3D
 			}
 
 			Vector3 worldHitPos = (Vector3)result["position"];
-			gameManager.AddBuilding(worldHitPos);
+			gameManager.AddBuilding(worldHitPos, isMain);
 		}
 	}
 

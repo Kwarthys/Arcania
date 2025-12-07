@@ -7,6 +7,7 @@ public class BuildingsManager
 {
 	private PackedScene turretModel;
 	private EnemyManager enemyManager = null;
+	private ResourcesManager resourcesManager = null;
 	private QuadTree tree = null;
 	public List<Building> buildings { get; private set; } = new();
 	public void LoadData(string _path)
@@ -20,15 +21,22 @@ public class BuildingsManager
 		}
 	}
 
-	public void Initialize(EnemyManager _enemyManager, QuadTree _tree)
+	public void Initialize(EnemyManager _enemyManager, ResourcesManager _resourcesManager, QuadTree _tree)
 	{
 		enemyManager = _enemyManager;
 		tree = _tree;
+		resourcesManager = _resourcesManager;
 	}
 
-	public void AddBuilding(Vector2I _pos)
+	public void AddTower(Vector2I _pos)
 	{
 		buildings.Add(Building.MakeBasicTower());
+		buildings.Last().position = _pos;
+	}
+
+	public void AddHarvester(Vector2I _pos)
+	{
+		buildings.Add(Building.MakeBasicHarvester());
 		buildings.Last().position = _pos;
 	}
 
@@ -37,6 +45,7 @@ public class BuildingsManager
 		foreach(Building b in buildings)
 		{
 			b.weapons?.ForEach((w) => w.Update(_dt, b.position, enemyManager, tree));
+			b.refiners?.ForEach((r) => r.Update(_dt, ref resourcesManager.playerResources));
 		}
 	}
 }
