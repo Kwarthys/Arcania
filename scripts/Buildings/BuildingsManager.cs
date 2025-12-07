@@ -10,6 +10,8 @@ public class BuildingsManager
 	private ResourcesManager resourcesManager = null;
 	private QuadTree tree = null;
 	public List<Building> buildings { get; private set; } = new();
+
+	private BuildingGrid grid = new();
 	public void LoadData(string _path)
 	{
 		JSONFormats.BuildingsData data = JSONManager.Read<JSONFormats.BuildingsData>(_path);
@@ -21,11 +23,12 @@ public class BuildingsManager
 		}
 	}
 
-	public void Initialize(EnemyManager _enemyManager, ResourcesManager _resourcesManager, QuadTree _tree)
+	public void Initialize(EnemyManager _enemyManager, ResourcesManager _resourcesManager, QuadTree _tree, Vector2I _gridSize)
 	{
 		enemyManager = _enemyManager;
 		tree = _tree;
 		resourcesManager = _resourcesManager;
+		grid.Initialize(_gridSize.X, _gridSize.Y);
 	}
 
 	public void AddTower(Vector2I _pos)

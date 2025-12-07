@@ -28,7 +28,7 @@ public partial class GameManager : Node
 		for(int i = 0; i < enemyManager.count; ++i)
 			tree.SubmitElement(i, enemyManager.GetPosition(i));
 
-		buildingsManager.Initialize(enemyManager, resourcesManager, tree);
+		buildingsManager.Initialize(enemyManager, resourcesManager, tree, new(50, 50));
 		buildingsManager.LoadData(BuildingsDataPath);
 
 		foreach(Building b in buildingsManager.buildings)
