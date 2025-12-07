@@ -12,6 +12,7 @@ public partial class GameManager : Node
 
 	[Export] private string BuildingsDataPath;
 	[Export] private PackedScene turretModel;
+	[Export] private PackedScene harvesterModel;
 	[Export] bool drawTreeDebug = false;
 
 	private BuildingsManager buildingsManager = new();

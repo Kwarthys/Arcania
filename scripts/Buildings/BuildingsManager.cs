@@ -28,7 +28,7 @@ public class BuildingsManager
 
 	public void AddBuilding(Vector2I _pos)
 	{
-		buildings.Add(new());
+		buildings.Add(Building.MakeBasicTower());
 		buildings.Last().position = _pos;
 	}
 
@@ -36,62 +36,7 @@ public class BuildingsManager
 	{
 		foreach(Building b in buildings)
 		{
-			if(b.fireDTCounter < b.firePeriod)
-				b.fireDTCounter += _dt;
-
-			bool justUpdatedTarget = false;
-
-			// Building is a tower
-			if(b.targetIndex == -1)
-			{
-				// find it a target
-				QuadTree.TreeBox rangeBox = new(b.position.X, b.position.Y, b.range);
-				List<int> indicesInBox = tree.GetElementsIn(rangeBox);
-
-				// Find closest
-				int closest = -1;
-				float distSquared = 0.0f;
-				foreach(int id in indicesInBox)
-				{
-					float currentDistanceSquared = enemyManager.GetPosition(id).DistanceSquaredTo(b.position);
-					if(closest == -1 || currentDistanceSquared < distSquared)
-					{
-						closest = id;
-						distSquared = currentDistanceSquared;
-					}
-				}
-
-				if(distSquared < b.range * b.range)
-				{
-					b.targetIndex = closest;
-					justUpdatedTarget = true;
-				}
-			}
-
-			// if we now have a target
-			if(b.targetIndex != -1)
-			{
-				Vector2 targetPos = enemyManager.GetPosition(b.targetIndex);
-				DrawDebugManager.DebugDrawLine(new(b.position.X, 7.0f, b.position.Y), new(targetPos.X, 0.5f, targetPos.Y));
-
-				if(justUpdatedTarget == false) // don't dist check if we got it this frame as we just did it
-				{
-					// Range check as it might have moved
-					if(enemyManager.GetHealth(b.targetIndex) <= 0.0 || enemyManager.GetPosition(b.targetIndex).DistanceSquaredTo(b.position) > b.range * b.range)
-					{
-						b.targetIndex = -1;
-						continue; // we lost our target, wait for next update to find another one
-					}
-				}
-
-				// Shoot Check
-				if(b.fireDTCounter > b.firePeriod)
-				{
-					// shoot !
-					b.fireDTCounter = 0.0;
-					enemyManager.Damage(b.targetIndex, b.damage);
-				}
-			}
+			b.weapons?.ForEach((w) => w.Update(_dt, b.position, enemyManager, tree));
 		}
 	}
 }

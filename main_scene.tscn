@@ -47,10 +47,10 @@ physics_material_override = SubResource("PhysicsMaterial_66tet")
 shape = SubResource("WorldBoundaryShape3D_7ycvg")
 
 [node name="Camera3D" type="Camera3D" parent="Scenery"]
-transform = Transform3D(-4.371139e-08, -0.6779417, 0.7351157, 0, 0.7351157, 0.67794174, -1, 2.9633773e-08, -3.213293e-08, 31.680582, 19.875137, 4.3009018e-06)
+transform = Transform3D(-1, 5.9286602e-08, -6.4248276e-08, -6.3387757e-09, 0.68380886, 0.7296612, 8.7192674e-08, 0.7296612, -0.68380886, 0, 20, -30)
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="Scenery"]
-transform = Transform3D(-0.45723367, -0.69265246, 0.55782586, -0.06774481, 0.6525349, 0.75472456, -0.8867629, 0.30729553, -0.34528482, 0, 19.137554, 0)
+transform = Transform3D(0.5738473, -0.59332824, 0.56450117, -0.067744784, 0.65253496, 0.7547242, -0.8161557, -0.47133774, 0.33426028, 0, 19.137554, 0)
 light_energy = 1.5
 shadow_enabled = true
 directional_shadow_mode = 1

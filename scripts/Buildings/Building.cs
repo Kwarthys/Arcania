@@ -1,12 +1,103 @@
 using Godot;
 using System;
+using System.Collections.Generic;
+using System.Resources;
 
 public class Building
 {
 	public Vector2I position = new(0, 0);
+	public float health = 100.0f;
+
+	public List<Weapon> weapons; // Apply damage effects to enemies
+	public List<Refiner> refiners; // Make changes to player's resources
+
+	public static Building MakeBasicTower()
+	{
+		Building tower = new();
+		tower.weapons = [new()];
+		return tower;
+	}
+
+	public static Building MakeBasicHarvester()
+	{
+		Building harvester = new();
+		harvester.refiners = [new()];
+		return harvester;
+	}
+}
+
+public class Weapon
+{
 	public float range = 5.0f;
 	public float damage = 100.0f;
 	public double fireDTCounter = 0.0;
 	public float firePeriod = 0.3f;
 	public int targetIndex = -1;
+
+	public void Update(double _dt, Vector2I _pos, EnemyManager _enemyManager, QuadTree _tree)
+	{
+		if(fireDTCounter < firePeriod)
+			fireDTCounter += _dt;
+
+		bool justUpdatedTarget = false;
+
+		// Building is a tower
+		if(targetIndex == -1)
+		{
+			// find it a target
+			QuadTree.TreeBox rangeBox = new(_pos.X, _pos.Y, range);
+			List<int> indicesInBox = _tree.GetElementsIn(rangeBox);
+
+			// Find closest
+			int closest = -1;
+			float distSquared = 0.0f;
+			foreach(int id in indicesInBox)
+			{
+				float currentDistanceSquared = _enemyManager.GetPosition(id).DistanceSquaredTo(_pos);
+				if(closest == -1 || currentDistanceSquared < distSquared)
+				{
+					closest = id;
+					distSquared = currentDistanceSquared;
+				}
+			}
+
+			if(distSquared < range * range)
+			{
+				targetIndex = closest;
+				justUpdatedTarget = true;
+			}
+		}
+
+		// if we now have a target
+		if(targetIndex != -1)
+		{
+			Vector2 targetPos = _enemyManager.GetPosition(targetIndex);
+			DrawDebugManager.DebugDrawLine(new(_pos.X, 7.0f, _pos.Y), new(targetPos.X, 0.5f, targetPos.Y));
+
+			if(justUpdatedTarget == false) // don't dist check if we got it this frame as we just did it
+			{
+				// Range check as it might have moved
+				if(_enemyManager.GetHealth(targetIndex) <= 0.0 || _enemyManager.GetPosition(targetIndex).DistanceSquaredTo(_pos) > range * range)
+				{
+					targetIndex = -1;
+					return; // we lost our target, wait for next update to find another one
+				}
+			}
+
+			// Shoot Check
+			if(fireDTCounter > firePeriod)
+			{
+				// shoot ! Will later apply the weapon's effect
+				fireDTCounter = 0.0;
+				_enemyManager.Damage(targetIndex, damage);
+			}
+		}
+	}
+}
+
+public class Refiner
+{
+	public Price delta = new(1.0f, 0.0f, 0.0f, 0.0f);
+	public float period = 1.0f;
+	public float activityRatio = 1.0f;
 }
