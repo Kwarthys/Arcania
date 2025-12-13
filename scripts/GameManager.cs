@@ -5,12 +5,10 @@ using System.Resources;
 
 public partial class GameManager : Node
 {
-	[Export] private MultiMeshInstance3D multiMesh;
 	[Export] private double trimCheckTimer = 5.0;
 	[Export] private string BuildingsDataPath;
-	[Export] private PackedScene turretModel;
-	[Export] private PackedScene harvesterModel;
 	[Export] bool drawTreeDebug = false;
+	[Export] ModelsDisplayer displayer;
 	private BuildingsManager buildingsManager = new();
 	private EnemyManager enemyManager = new();
 	private ResourcesManager resourcesManager = new();
@@ -23,21 +21,15 @@ public partial class GameManager : Node
 		int n = 1000;
 		enemyManager.Initialize(n);
 
-		tree = new(new(-25.0f, -25.0f, 50.0f, 50.0f), enemyManager);
+		tree = new(new(0.0f, 0.0f, 50.0f, 50.0f), enemyManager);
 
 		for(int i = 0; i < enemyManager.count; ++i)
 			tree.SubmitElement(i, enemyManager.GetPosition(i));
 
-		buildingsManager.Initialize(enemyManager, resourcesManager, tree, new(50, 50));
+		buildingsManager.Initialize(this, enemyManager, resourcesManager, tree, new(50, 50));
 		buildingsManager.LoadData(BuildingsDataPath);
 
-		foreach(Building b in buildingsManager.buildings)
-		{
-			Node3D turret = turretModel.Instantiate<Node3D>();
-			turret.Position = new(b.position.X, 0.0f, b.position.Y);
-			AddChild(turret);
-		}
-
+		displayer.Initialize(new(tree.root.boundingBox.w * -0.5f, tree.root.boundingBox.h * -0.5f));
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -50,6 +42,7 @@ public partial class GameManager : Node
 
 		ResourceDisplayManager.Instance.Update(resourcesManager.playerResources);
 
+		/** Quad Tree Update **/
 		List<int> orphanIndices = new();
 		tree.CheckDepartures(orphanIndices);
 
@@ -58,49 +51,23 @@ public partial class GameManager : Node
 		if(drawTreeDebug)
 			tree.DrawDebug();
 
-		int meshesToDisplay = 0;
-		for(int i = 0; i < enemyManager.count; ++i)
-		{
-			if(enemyManager.Alive(i))
-				meshesToDisplay++;
-		}
-		multiMesh.Multimesh.InstanceCount = meshesToDisplay;
-
-		int meshIndex = 0;
-		for(int i = 0; i < enemyManager.count; ++i)
-		{
-			if(enemyManager.Alive(i) == false)
-				continue;
-
-			Vector3 pos = new(enemyManager.positions[i].X, 0.5f, enemyManager.positions[i].Y);
-			multiMesh.Multimesh.SetInstanceTransform(meshIndex++, new Transform3D(Basis.Identity, pos));
-		}
-
 		dtCounter += _dt;
 		if(dtCounter > trimCheckTimer)
 		{
 			tree.CheckTrim();
 			dtCounter = 0.0;
 		}
+		/**					**/
+
+		displayer.Update(enemyManager);
 	}
 
-	public void AddBuilding(Vector3 _pos, bool _tower)
+	public void AddBuilding(Vector3 _pos, bool _isTower)
 	{
-		Vector2I pos = new(Mathf.FloorToInt(_pos.X), Mathf.FloorToInt(_pos.Z));
-		Node3D model;
-		if(_tower)
-		{
-			model = turretModel.Instantiate<Node3D>();
-			buildingsManager.AddTower(pos);
-
-		}
-		else
-		{
-			model = harvesterModel.Instantiate<Node3D>();
-			buildingsManager.AddHarvester(pos);
-		}
-
-		model.Position = new(pos.X, 0.0f, pos.Y);
-		AddChild(model);
+		Vector2I gridPos = displayer.WorldToGrid(_pos);
+		buildingsManager.AddBuilding(gridPos, _isTower);
 	}
+
+	public void OnBuildingAdded(Building _b) { displayer.AddBuilding(_b); }
+	public void OnBuildingRemoved(Building _b) { displayer.RemoveBuilding(_b); }
 }

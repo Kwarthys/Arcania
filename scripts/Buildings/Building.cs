@@ -28,10 +28,10 @@ public class Building
 
 public class Weapon
 {
-	public float range = 5.0f;
+	public float range = 10.0f;
 	public float damage = 100.0f;
 	public double fireDTCounter = 0.0;
-	public float firePeriod = 0.3f;
+	public float firePeriod = 2.0f;
 	public int targetIndex = -1;
 
 	public void Update(double _dt, Vector2I _pos, EnemyManager _enemyManager, QuadTree _tree)
@@ -71,9 +71,6 @@ public class Weapon
 		// if we now have a target
 		if(targetIndex != -1)
 		{
-			Vector2 targetPos = _enemyManager.GetPosition(targetIndex);
-			DrawDebugManager.DebugDrawLine(new(_pos.X, 7.0f, _pos.Y), new(targetPos.X, 0.5f, targetPos.Y));
-
 			if(justUpdatedTarget == false) // don't dist check if we got it this frame as we just did it
 			{
 				// Range check as it might have moved

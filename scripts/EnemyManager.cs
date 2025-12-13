@@ -19,8 +19,8 @@ public class EnemyManager
 		for(int i = 0; i < _numberOfUnit; ++i)
 		{
 			healths.Add(100.0f);
-			float posX = (GD.Randf() * GD.Randf() - 0.5f) * 50.0f;
-			float posY = (GD.Randf() * GD.Randf() - 0.5f) * 50.0f;
+			float posX = GD.Randf() * GD.Randf() * 50.0f;
+			float posY = GD.Randf() * GD.Randf() * 50.0f;
 			positions.Add(new(posX, posY));
 
 			float speedNormal = GD.Randf() * 5.0f + 0.2f;
@@ -41,14 +41,14 @@ public class EnemyManager
 			bool flipX = false;
 			bool flipY = false;
 
-			if(positions[i].X > 24.0f && speeds[i].X > 0.0f)
+			if(positions[i].X > 49.0f && speeds[i].X > 0.0f)
 				flipX = true;
-			else if(positions[i].X < -24.0f && speeds[i].X < 0.0f)
+			else if(positions[i].X < 1.0f && speeds[i].X < 0.0f)
 				flipX = true;
 
-			if(positions[i].Y > 24.0f && speeds[i].Y > 0.0f)
+			if(positions[i].Y > 49.0f && speeds[i].Y > 0.0f)
 				flipY = true;
-			else if(positions[i].Y < -24.0f && speeds[i].Y < 0.0f)
+			else if(positions[i].Y < 1.0f && speeds[i].Y < 0.0f)
 				flipY = true;
 
 			if(flipX || flipY)
