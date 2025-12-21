@@ -49,7 +49,7 @@ public partial class GameManager : Node
 		orphanIndices.ForEach((id) => tree.SubmitElement(id, enemyManager.positions[id]));
 
 		if(drawTreeDebug)
-			tree.DrawDebug();
+			tree.DrawDebug(displayer.gridStart);
 
 		dtCounter += _dt;
 		if(dtCounter > trimCheckTimer)

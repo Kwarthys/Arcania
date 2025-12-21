@@ -188,16 +188,16 @@ public class TreeCell
         elementsIndices.Clear();
     }
 
-    public void DrawDebug()
+    public void DrawDebug(Vector2 _offset)
     {
         //  A - B
         //  |   |
         //  D - C 
         float height = 1.0f;
-        Vector3 a = new(boundingBox.x, height, boundingBox.y);
-        Vector3 b = new(boundingBox.x + boundingBox.w, height, boundingBox.y);
-        Vector3 c = new(boundingBox.x + boundingBox.w, height, boundingBox.y + boundingBox.h);
-        Vector3 d = new(boundingBox.x, height, boundingBox.y + boundingBox.h);
+        Vector3 a = new(boundingBox.x + _offset.X, height, boundingBox.y + _offset.Y);
+        Vector3 b = new(boundingBox.x + boundingBox.w + _offset.X, height, boundingBox.y + _offset.Y);
+        Vector3 c = new(boundingBox.x + boundingBox.w + _offset.X, height, boundingBox.y + boundingBox.h + _offset.Y);
+        Vector3 d = new(boundingBox.x + _offset.X, height, boundingBox.y + boundingBox.h + _offset.Y);
 
         DrawDebugManager.DebugDrawSquare(a, b, c, d);
 
@@ -205,6 +205,6 @@ public class TreeCell
             return;
 
         for(int i = 0; i < 4; ++i)
-            children[i].DrawDebug();
+            children[i].DrawDebug(_offset);
     }
 }

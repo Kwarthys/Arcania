@@ -47,7 +47,7 @@ public class QuadTree
     public void SubmitElement(int _id, Vector2 _position) { root.SubmitElement(_id, _position); }
     public void CheckDepartures(List<int> _removedIndices) { root.CheckDepartures(_removedIndices); }
     public void CheckTrim() { root.CheckTrim(); }
-    public void DrawDebug() { root.DrawDebug(); }
+    public void DrawDebug(Vector2 _offset) { root.DrawDebug(_offset); }
 
     public List<int> GetElementsIn(TreeBox _box)
     {

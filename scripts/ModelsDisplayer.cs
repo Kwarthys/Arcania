@@ -52,7 +52,6 @@ public partial class ModelsDisplayer : Node
 	{
 		int x = Mathf.FloorToInt(_worldPos.X - gridStart.X);
 		int y = Mathf.FloorToInt(_worldPos.Z - gridStart.Y);
-		GD.Print(_worldPos + " -> (" + x + ", " + y + ")");
 		return new(x, y);
 	}
 }
