@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 
 public class BuildingsManager
@@ -11,6 +12,8 @@ public class BuildingsManager
 	private GameManager gameManager;
 	private QuadTree tree = null;
 	public List<Building> buildings { get; private set; } = new();
+
+	private int updateOffset = 0;
 
 	private BuildingGrid grid = new();
 	public void LoadData(string _path)
@@ -56,10 +59,18 @@ public class BuildingsManager
 
 	public void Update(double _dt)
 	{
-		foreach(Building b in buildings)
+		for(int i = 0; i < buildings.Count; ++i)
 		{
-			b.weapons?.ForEach((w) => w.Update(_dt, b.position, enemyManager, tree));
+			int index = (i + updateOffset) % buildings.Count;
+			Building b = buildings[index];
+
+			b.weapons?.ForEach((w) => w.Update(_dt, b.position, enemyManager, tree, ref resourcesManager));
 			b.refiners?.ForEach((r) => r.Update(_dt, ref resourcesManager.playerResources));
 		}
+
+		// Make sure all buildings have the chance to access resources
+		updateOffset++;
+		if(updateOffset >= buildings.Count)
+			updateOffset = 0;
 	}
 }

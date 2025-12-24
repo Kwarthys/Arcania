@@ -11,6 +11,16 @@ public class ResourcesManager
 	public void Pay(Price _p) { playerResources -= _p; }
 	public void Add(Price _p) { playerResources += _p; }
 
+	public bool tryPay(Price _p)
+	{
+		if(Afford(_p))
+		{
+			Pay(_p);
+			return true;
+		}
+		return false;
+	}
+
 	public enum Resource { Mana, Fire, Elec, Stone };
 
 }
@@ -25,6 +35,14 @@ public class Price
 		amounts.Add(ResourcesManager.Resource.Fire, 0.0f);
 		amounts.Add(ResourcesManager.Resource.Elec, 0.0f);
 		amounts.Add(ResourcesManager.Resource.Stone, 0.0f);
+	}
+	public Price(float _n)
+	{
+		amounts = new();
+		amounts.Add(ResourcesManager.Resource.Mana, _n);
+		amounts.Add(ResourcesManager.Resource.Fire, _n);
+		amounts.Add(ResourcesManager.Resource.Elec, _n);
+		amounts.Add(ResourcesManager.Resource.Stone, _n);
 	}
 	public Price(float _mana, float _fire, float _elec, float _stone)
 	{
@@ -97,6 +115,26 @@ public class Price
 		return true;
 	}
 
+	public static bool operator <(Price _a, Price _b)
+	{
+		foreach(KeyValuePair<ResourcesManager.Resource, float> pair in _a.amounts)
+		{
+			if(pair.Value < _b[pair.Key])
+				return true;
+		}
+		return false;
+	}
+
+	public static bool operator >(Price _a, Price _b)
+	{
+		foreach(KeyValuePair<ResourcesManager.Resource, float> pair in _a.amounts)
+		{
+			if(pair.Value > _b[pair.Key])
+				return true;
+		}
+		return false;
+	}
+
 	public static bool operator true(Price _p)
 	{
 		foreach(KeyValuePair<ResourcesManager.Resource, float> pair in _p.amounts)
@@ -116,4 +154,15 @@ public class Price
 		}
 		return true;
 	}
+
+	public override string ToString()
+	{
+		string text = "";
+		foreach(KeyValuePair<ResourcesManager.Resource, float> pair in amounts)
+		{
+			text += (text.Length == 0 ? "(" : ", ") + pair.Value;
+		}
+		return text + ")";
+	}
+
 }

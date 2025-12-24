@@ -17,9 +17,10 @@ public partial class ResourceDisplayManager : Control
 
 	public void Update(Price _playerResources)
 	{
-		manaText.Text = _playerResources[ResourcesManager.Resource.Mana].ToString();
-		fireText.Text = _playerResources[ResourcesManager.Resource.Fire].ToString();
-		elecText.Text = _playerResources[ResourcesManager.Resource.Elec].ToString();
-		stoneText.Text = _playerResources[ResourcesManager.Resource.Stone].ToString();
+		string format = "0.0";
+		manaText.Text = _playerResources[ResourcesManager.Resource.Mana].ToString(format);
+		fireText.Text = _playerResources[ResourcesManager.Resource.Fire].ToString(format);
+		elecText.Text = _playerResources[ResourcesManager.Resource.Elec].ToString(format);
+		stoneText.Text = _playerResources[ResourcesManager.Resource.Stone].ToString(format);
 	}
 }

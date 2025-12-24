@@ -30,15 +30,22 @@ public class Weapon
 {
 	public float range = 10.0f;
 	public float damage = 100.0f;
-	public double fireDTCounter = 0.0;
 	public float firePeriod = 2.0f;
 	public int targetIndex = -1;
 
-	public void Update(double _dt, Vector2I _pos, EnemyManager _enemyManager, QuadTree _tree)
-	{
-		if(fireDTCounter < firePeriod)
-			fireDTCounter += _dt;
+	public Price shotCost = new(5.0f, 0.0f, 0.0f, 0.0f);
+	private Price accumulator = new();
 
+	public void Update(double _dt, Vector2I _pos, EnemyManager _enemyManager, QuadTree _tree, ref ResourcesManager _playerResources)
+	{
+		if(accumulator < shotCost)
+		{
+			Price deltaPrice = shotCost * ((float)_dt / firePeriod);
+			if(_playerResources.tryPay(deltaPrice))
+			{
+				accumulator += deltaPrice;
+			}
+		}
 		bool justUpdatedTarget = false;
 
 		// Building is a tower
@@ -82,10 +89,10 @@ public class Weapon
 			}
 
 			// Shoot Check
-			if(fireDTCounter > firePeriod)
+			if(accumulator >= shotCost)
 			{
 				// shoot ! Will later apply the weapon's effect
-				fireDTCounter = 0.0;
+				accumulator -= shotCost;
 				_enemyManager.Damage(targetIndex, damage);
 			}
 		}
