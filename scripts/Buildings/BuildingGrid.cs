@@ -32,6 +32,9 @@ public class BuildingGrid
 
 	public bool Available(BoundingBoxI bbox)
 	{
+		if(bbox.x < 0 || bbox.y < 0 || bbox.x + bbox.w > w || bbox.y + bbox.h > h)
+			return false; // Outside of grid
+
 		for(int j = bbox.y; j < bbox.y + bbox.h; ++j)
 		{
 			for(int i = bbox.x; i < bbox.x + bbox.w; ++i)

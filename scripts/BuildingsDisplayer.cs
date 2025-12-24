@@ -64,6 +64,6 @@ public partial class BuildingsDisplayer : Node
 	private void Reposition(Building _b)
 	{
 		Node3D node = models[_b];
-		node.Position = displayer.GridToWorld(_b.position);
+		node.Position = displayer.GridToWorld(_b.GetCenterPosition());
 	}
 }

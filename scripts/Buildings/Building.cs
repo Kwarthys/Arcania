@@ -5,7 +5,7 @@ using System.Resources;
 
 public class Building
 {
-	public Vector2I position = new(0, 0);
+	public BoundingBoxI bbox = new(0, 0, 1, 1);
 	public float health = 100.0f;
 
 	public List<Weapon> weapons; // Apply damage effects to enemies
@@ -21,8 +21,17 @@ public class Building
 	public static Building MakeBasicHarvester()
 	{
 		Building harvester = new();
+		harvester.bbox = new(0, 0, 2, 2);
 		harvester.refiners = [new()];
 		return harvester;
+	}
+
+	public Vector2I GetPosition() { return new(bbox.x, bbox.y); }
+	public Vector2 GetCenterPosition() { return new(bbox.x + bbox.w / 2.0f, bbox.y + bbox.h / 2.0f); }
+	public void SetPosition(Vector2I _pos)
+	{
+		bbox.x = _pos.X;
+		bbox.y = _pos.Y;
 	}
 }
 
@@ -36,7 +45,7 @@ public class Weapon
 	public Price shotCost = new(5.0f, 0.0f, 0.0f, 0.0f);
 	private Price accumulator = new();
 
-	public void Update(double _dt, Vector2I _pos, EnemyManager _enemyManager, QuadTree _tree, ref ResourcesManager _playerResources)
+	public void Update(double _dt, Vector2 _pos, EnemyManager _enemyManager, QuadTree _tree, ref ResourcesManager _playerResources)
 	{
 		if(accumulator < shotCost)
 		{

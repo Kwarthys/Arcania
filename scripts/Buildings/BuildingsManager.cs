@@ -21,7 +21,7 @@ public class BuildingsManager
 		JSONFormats.BuildingsData data = JSONManager.Read<JSONFormats.BuildingsData>(_path);
 		GD.Print(data);
 
-		foreach(JSONFormats.Building building in data.Buildings)
+		foreach (JSONFormats.Building building in data.Buildings)
 		{
 			GD.Print(building.Name + ": " + building.Cost.Mana);
 		}
@@ -36,41 +36,40 @@ public class BuildingsManager
 		grid.Initialize(_gridSize.X, _gridSize.Y);
 	}
 
-	public void AddBuilding(Vector2I _gridPos, bool _isTower)
+	public bool AddBuilding(Vector2I _gridPos, bool _isTower)
 	{
-		if(_isTower)
-			AddTower(_gridPos);
+		Building candidate;
+
+		if (_isTower)
+			candidate = Building.MakeBasicTower();
 		else
-			AddHarvester(_gridPos);
+			candidate = Building.MakeBasicHarvester();
+
+		candidate.SetPosition(_gridPos);
+
+		if (grid.Available(candidate.bbox) == false)
+			return false;
+
+		buildings.Add(candidate);
+		grid.AddBuilding(buildings.Count, candidate.bbox);
 		gameManager.OnBuildingAdded(buildings.Last());
-	}
-
-	public void AddTower(Vector2I _pos)
-	{
-		buildings.Add(Building.MakeBasicTower());
-		buildings.Last().position = _pos;
-	}
-
-	public void AddHarvester(Vector2I _pos)
-	{
-		buildings.Add(Building.MakeBasicHarvester());
-		buildings.Last().position = _pos;
+		return true;
 	}
 
 	public void Update(double _dt)
 	{
-		for(int i = 0; i < buildings.Count; ++i)
+		for (int i = 0; i < buildings.Count; ++i)
 		{
 			int index = (i + updateOffset) % buildings.Count;
 			Building b = buildings[index];
 
-			b.weapons?.ForEach((w) => w.Update(_dt, b.position, enemyManager, tree, ref resourcesManager));
+			b.weapons?.ForEach((w) => w.Update(_dt, b.GetCenterPosition(), enemyManager, tree, ref resourcesManager));
 			b.refiners?.ForEach((r) => r.Update(_dt, ref resourcesManager.playerResources));
 		}
 
 		// Make sure all buildings have the chance to access resources
 		updateOffset++;
-		if(updateOffset >= buildings.Count)
+		if (updateOffset >= buildings.Count)
 			updateOffset = 0;
 	}
 }
