@@ -34,7 +34,7 @@ public class QuadTree
 
         public override string ToString()
         {
-            return x + ", " + y + " | " + w + ", " + h;
+            return x + ", " + y + " -> " + (x + w) + ", " + (y + h);
         }
 
     }

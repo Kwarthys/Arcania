@@ -130,10 +130,10 @@ public class TreeCell
 
     public bool Contains(Vector2 _position)
     {
-        return _position.X > boundingBox.x                      // X not before the start of our box
-        && _position.Y > boundingBox.y                          // Y not before its start
-        && _position.X < boundingBox.x + boundingBox.w          // X not after its end
-        && _position.Y < boundingBox.y + boundingBox.h;         // Y not after its end
+        return _position.X >= boundingBox.x                      // X not before the start of our box
+        && _position.Y >= boundingBox.y                          // Y not before its start
+        && _position.X <= boundingBox.x + boundingBox.w          // X not after its end
+        && _position.Y <= boundingBox.y + boundingBox.h;         // Y not after its end
     }
 
     public bool Intersects(QuadTree.TreeBox _box)
@@ -150,7 +150,11 @@ public class TreeCell
                 return true; // Get out once a child took the element
         }
 
-        GD.PrintErr("TreeCell.SubmitToChildren: No children took care of element " + _id);
+        // Should not reach here
+        GD.PrintErr("TreeCell.SubmitToChildren: No children took care of element " + _id + " at pos " + _position + " :: BBox: " + boundingBox);
+        for(int i = 0; i < 4; ++i)
+            GD.PrintErr("TreeCell.SubmitToChildren: childBBox" + children[i].boundingBox);
+
         return false;
     }
 
