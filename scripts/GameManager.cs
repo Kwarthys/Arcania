@@ -7,8 +7,9 @@ public partial class GameManager : Node
 {
 	[Export] private double trimCheckTimer = 5.0;
 	[Export] private string BuildingsDataPath;
-	[Export] bool drawTreeDebug = false;
-	[Export] ModelsDisplayer displayer;
+	[Export] private bool drawTreeDebug = false;
+	[Export] private ModelsDisplayer displayer;
+	[Export] private BuilderMenu builderMenu;
 	private BuildingsManager buildingsManager = new();
 	private EnemyManager enemyManager = new();
 	private ResourcesManager resourcesManager = new();
@@ -30,6 +31,8 @@ public partial class GameManager : Node
 		buildingsManager.LoadData(BuildingsDataPath);
 
 		displayer.Initialize(new(tree.root.boundingBox.w * -0.5f, tree.root.boundingBox.h * -0.5f));
+
+		builderMenu.Initialize();
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.

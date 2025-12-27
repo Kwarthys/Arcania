@@ -1,14 +1,16 @@
-[gd_scene load_steps=18 format=3 uid="uid://btp0dvhkjxep"]
+[gd_scene load_steps=20 format=3 uid="uid://btp0dvhkjxep"]
 
 [ext_resource type="Script" uid="uid://d0c1dr5w4epx4" path="res://scripts/GameManager.cs" id="1_0f027"]
 [ext_resource type="Script" uid="uid://751yj3svkc4v" path="res://scripts/rotator.gd" id="1_gyfs4"]
 [ext_resource type="Script" uid="uid://dk8q0aajeogni" path="res://scripts/Utils/DrawDebugManager.cs" id="4_8mm7a"]
 [ext_resource type="Script" uid="uid://daf82iewejgfu" path="res://scripts/fpsCounter.gd" id="4_d5x1h"]
 [ext_resource type="PackedScene" uid="uid://cbfq7hji05gf8" path="res://prefabs/Buildings/BasicTower.tscn" id="4_hq1ik"]
-[ext_resource type="PackedScene" uid="uid://c4211137nxxaa" path="res://prefabs/Buildings/basicHarvester.tscn" id="5_66tet"]
+[ext_resource type="PackedScene" uid="uid://c4211137nxxaa" path="res://prefabs/Buildings/BasicHarvester.tscn" id="5_66tet"]
 [ext_resource type="Script" uid="uid://ch7wdu0bi0iq4" path="res://scripts/ModelsDisplayer.cs" id="6_66tet"]
 [ext_resource type="Script" uid="uid://cw638jn5oj5ce" path="res://scripts/InputManager.cs" id="6_nfk4m"]
 [ext_resource type="Script" uid="uid://ddo610n3xwx14" path="res://scripts/UIManagement/ResourceDisplayManager.cs" id="9_7ycvg"]
+[ext_resource type="Script" uid="uid://bbq8kqmqc5quo" path="res://scripts/UIManagement/BuilderMenu.cs" id="10_qwutr"]
+[ext_resource type="Texture2D" uid="uid://birt34f1xwmk3" path="res://Assets/BuildingsIcon/TestIcon.png" id="10_wr18j"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_o3jxj"]
 vertex_color_use_as_albedo = true
@@ -68,10 +70,11 @@ script = ExtResource("1_gyfs4")
 
 [node name="Managers" type="Node" parent="."]
 
-[node name="GameManager" type="Node" parent="Managers" node_paths=PackedStringArray("displayer")]
+[node name="GameManager" type="Node" parent="Managers" node_paths=PackedStringArray("displayer", "builderMenu")]
 script = ExtResource("1_0f027")
 BuildingsDataPath = "res://ConfigFiles/BuildingsData.json"
 displayer = NodePath("ModelsDisplayer")
+builderMenu = NodePath("../../GameUI/BuilderMenu")
 
 [node name="ModelsDisplayer" type="Node" parent="Managers/GameManager"]
 script = ExtResource("6_66tet")
@@ -158,3 +161,42 @@ text = "stone"
 fit_content = true
 scroll_active = false
 autowrap_mode = 0
+
+[node name="BuilderMenu" type="Control" parent="GameUI" node_paths=PackedStringArray("buttonContainer")]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 0
+script = ExtResource("10_qwutr")
+buttonContainer = NodePath("MarginContainer/HBoxContainer")
+icon = ExtResource("10_wr18j")
+
+[node name="MarginContainer" type="MarginContainer" parent="GameUI/BuilderMenu"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -54.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="HBoxContainer" type="HBoxContainer" parent="GameUI/BuilderMenu/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Button" type="Button" parent="GameUI/BuilderMenu/MarginContainer/HBoxContainer"]
+layout_mode = 2
+focus_mode = 0
+text = "Test Button"
+icon = ExtResource("10_wr18j")
+icon_alignment = 1
+vertical_icon_alignment = 0
+expand_icon = true
