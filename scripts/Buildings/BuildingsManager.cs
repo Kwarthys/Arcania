@@ -12,6 +12,7 @@ public class BuildingsManager
 	private GameManager gameManager;
 	private QuadTree tree = null;
 	public List<Building> buildings { get; private set; } = new();
+	public List<string> allBuildingNames { get; private set; } = new();
 
 	private int updateOffset = 0;
 
@@ -19,11 +20,10 @@ public class BuildingsManager
 	public void LoadData(string _path)
 	{
 		JSONFormats.BuildingsData data = JSONManager.Read<JSONFormats.BuildingsData>(_path);
-		GD.Print(data);
 
-		foreach (JSONFormats.Building building in data.Buildings)
+		foreach(JSONFormats.Building building in data.Buildings)
 		{
-			GD.Print(building.Name + ": " + building.Cost.Mana);
+			allBuildingNames.Add(building.Name);
 		}
 	}
 
@@ -40,25 +40,25 @@ public class BuildingsManager
 	{
 		Building candidate;
 
-		if (_isTower)
+		if(_isTower)
 			candidate = Building.MakeBasicTower();
 		else
 			candidate = Building.MakeBasicHarvester();
 
 		candidate.SetPosition(_gridPos);
 
-		if (grid.Available(candidate.bbox) == false)
+		if(grid.Available(candidate.bbox) == false)
 			return false;
 
 		buildings.Add(candidate);
-		grid.AddBuilding(buildings.Count, candidate.bbox);
+		grid.AddBuilding(buildings.Count - 1, candidate.bbox);
 		gameManager.OnBuildingAdded(buildings.Last());
 		return true;
 	}
 
 	public void Update(double _dt)
 	{
-		for (int i = 0; i < buildings.Count; ++i)
+		for(int i = 0; i < buildings.Count; ++i)
 		{
 			int index = (i + updateOffset) % buildings.Count;
 			Building b = buildings[index];
@@ -69,7 +69,7 @@ public class BuildingsManager
 
 		// Make sure all buildings have the chance to access resources
 		updateOffset++;
-		if (updateOffset >= buildings.Count)
+		if(updateOffset >= buildings.Count)
 			updateOffset = 0;
 	}
 }

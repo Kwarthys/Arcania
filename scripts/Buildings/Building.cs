@@ -7,14 +7,15 @@ public class Building
 {
 	public BoundingBoxI bbox = new(0, 0, 1, 1);
 	public float health = 100.0f;
-
 	public List<Weapon> weapons; // Apply damage effects to enemies
 	public List<Refiner> refiners; // Make changes to player's resources
+	public string buildingName { get; private set; }
 
 	public static Building MakeBasicTower()
 	{
 		Building tower = new();
 		tower.weapons = [new()];
+		tower.buildingName = "BasicTower";
 		return tower;
 	}
 
@@ -23,6 +24,7 @@ public class Building
 		Building harvester = new();
 		harvester.bbox = new(0, 0, 2, 2);
 		harvester.refiners = [new()];
+		harvester.buildingName = "BasicHarvester";
 		return harvester;
 	}
 
@@ -30,8 +32,8 @@ public class Building
 	public Vector2 GetCenterPosition() { return new(bbox.x + bbox.w / 2.0f, bbox.y + bbox.h / 2.0f); }
 	public void SetPosition(Vector2I _pos)
 	{
-		bbox.x = _pos.X;
-		bbox.y = _pos.Y;
+		bbox.x = _pos.X - bbox.w / 2;
+		bbox.y = _pos.Y - bbox.h / 2;
 	}
 }
 

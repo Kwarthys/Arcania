@@ -30,9 +30,9 @@ public partial class GameManager : Node
 		buildingsManager.Initialize(this, enemyManager, resourcesManager, tree, new(50, 50));
 		buildingsManager.LoadData(BuildingsDataPath);
 
-		displayer.Initialize(new(tree.root.boundingBox.w * -0.5f, tree.root.boundingBox.h * -0.5f));
+		displayer.Initialize(new(tree.root.boundingBox.w * -0.5f, tree.root.boundingBox.h * -0.5f), buildingsManager.allBuildingNames);
 
-		builderMenu.Initialize();
+		builderMenu.Initialize(this, buildingsManager.allBuildingNames);
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -63,6 +63,12 @@ public partial class GameManager : Node
 		/**					**/
 
 		displayer.Update(enemyManager);
+
+		if(builderMenu.selectedBuilding != "")
+		{
+			Vector3 mouseWorldPos = InputManager.GetMousePosOnGamePlane();
+			displayer.MoveGhost(mouseWorldPos);
+		}
 	}
 
 	public void AddBuilding(Vector3 _pos, bool _isTower)
@@ -73,4 +79,5 @@ public partial class GameManager : Node
 
 	public void OnBuildingAdded(Building _b) { displayer.AddBuilding(_b); }
 	public void OnBuildingRemoved(Building _b) { displayer.RemoveBuilding(_b); }
+	public void OnBuildingGhostChange(string _name) { displayer.UpdateBuildingGhost(_name); }
 }

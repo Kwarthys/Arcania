@@ -1,11 +1,11 @@
 using Godot;
 using System;
+using System.Collections.Generic;
 
 public partial class ModelsDisplayer : Node
 {
 	[Export] Mesh unitsMesh;
-	[Export] private PackedScene turretModel;
-	[Export] private PackedScene harvesterModel;
+	[Export] public string buildingModelsPath { get; private set; }
 	public Vector2 gridStart { get; private set; } = new(-25.0f, -25.0f);
 
 	private BuildingsDisplayer buildingsDisplayer;
@@ -20,11 +20,11 @@ public partial class ModelsDisplayer : Node
 		AddChild(buildingsDisplayer);
 	}
 
-	public void Initialize(Vector2 _gridStart)
+	public void Initialize(Vector2 _gridStart, List<string> _buildingNames)
 	{
 		gridStart = _gridStart;
 		unitsDisplayer.Initialize(this, unitsMesh);
-		buildingsDisplayer.Initialize(this, turretModel, harvesterModel);
+		buildingsDisplayer.Initialize(this, _buildingNames);
 	}
 
 	public void Update(EnemyManager _enemyManager)
@@ -34,6 +34,8 @@ public partial class ModelsDisplayer : Node
 	}
 	public void AddBuilding(Building _b) { buildingsDisplayer?.AddBuilding(_b); }
 	public void RemoveBuilding(Building _b) { buildingsDisplayer?.RemoveBuilding(_b); }
+	public void MoveGhost(Vector3 _worldPos) { buildingsDisplayer?.MoveGhost(_worldPos); }
+	public void UpdateBuildingGhost(string _name) { buildingsDisplayer?.ChangeGhost(_name); }
 
 	public Vector3 GridToWorld(Vector2I _gridPos)
 	{
@@ -50,8 +52,14 @@ public partial class ModelsDisplayer : Node
 
 	public Vector2I WorldToGrid(Vector3 _worldPos)
 	{
-		int x = Mathf.FloorToInt(_worldPos.X - gridStart.X);
-		int y = Mathf.FloorToInt(_worldPos.Z - gridStart.Y);
+		int x = Mathf.RoundToInt(_worldPos.X - gridStart.X);
+		int y = Mathf.RoundToInt(_worldPos.Z - gridStart.Y);
 		return new(x, y);
+	}
+
+	public Vector3 SnapToGrid(Vector3 _worldPos)
+	{
+		//return new(Mathf.Round(_worldPos.X), Mathf.Round(_worldPos.Y), Mathf.Round(_worldPos.Z));
+		return GridToWorld(WorldToGrid(_worldPos));
 	}
 }

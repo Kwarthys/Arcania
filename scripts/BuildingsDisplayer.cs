@@ -5,28 +5,29 @@ using System.Collections.Generic;
 public partial class BuildingsDisplayer : Node
 {
 	private ModelsDisplayer displayer;
-	private PackedScene turretModel;
-	private PackedScene harvesterModel;
 	private Dictionary<Building, Node3D> models = new();
 
-	public void Initialize(ModelsDisplayer _displayer, PackedScene _turretModel, PackedScene _harvesterModel)
+	private BuildingGhostManager ghostManager = new();
+
+	private Dictionary<string, PackedScene> buildingScenesPerName = new();
+
+	public void Initialize(ModelsDisplayer _displayer, List<string> _buildingNames)
 	{
 		displayer = _displayer;
-		turretModel = _turretModel;
-		harvesterModel = _harvesterModel;
+		ghostManager.Initialize(displayer);
+		PreLoadBuildingsModel(_buildingNames);
 	}
 
 	public void AddBuilding(Building _b)
 	{
 		if(models.ContainsKey(_b) == false)
 		{
-			PackedScene scene;
-			if(_b.weapons != null)
-				scene = turretModel;
-			else
-				scene = harvesterModel;
-
-			Node3D node = scene.Instantiate<Node3D>();
+			Node3D node = InstantiateBuildingModel(_b.buildingName);
+			if(node == null)
+			{
+				GD.PrintErr("Failed to instantiate " + _b.buildingName);
+				return;
+			}
 			models.Add(_b, node);
 			AddChild(node);
 		}
@@ -66,4 +67,57 @@ public partial class BuildingsDisplayer : Node
 		Node3D node = models[_b];
 		node.Position = displayer.GridToWorld(_b.GetCenterPosition());
 	}
+
+	private void PreLoadBuildingsModel(List<string> _names)
+	{
+		foreach(string name in _names)
+		{
+			GD.Print("Trying to load " + BuildingNameToScene(name));
+			ResourceLoader.LoadThreadedRequest(BuildingNameToScene(name));
+		}
+	}
+
+	public void MoveGhost(Vector3 _worldPos) { ghostManager.UpdateGhost(_worldPos); }
+
+	public void ChangeGhost(string _name)
+	{
+		Node3D model = InstantiateBuildingModel(_name);
+		ghostManager.ChangeGhost(model);
+		if(model != null)
+			AddChild(model);
+	}
+
+	private PackedScene GetBuildingScene(string _name)
+	{
+		if(buildingScenesPerName.ContainsKey(_name) == false)
+		{
+			string scenePath = BuildingNameToScene(_name);
+
+			if(ResourceLoader.LoadThreadedGetStatus(scenePath) == ResourceLoader.ThreadLoadStatus.Loaded)
+			{
+				buildingScenesPerName.Add(_name, (PackedScene)ResourceLoader.LoadThreadedGet(scenePath));
+			}
+			else
+			{
+				return null;
+			}
+		}
+
+		return buildingScenesPerName[_name];
+	}
+
+	private Node3D InstantiateBuildingModel(string _name)
+	{
+		if(_name == "")
+			return null;
+
+		PackedScene buildingScene = GetBuildingScene(_name);
+		if(buildingScene == null)
+			return null;
+
+		Node3D model = buildingScene.Instantiate<Node3D>();
+		return model;
+	}
+
+	private string BuildingNameToScene(string name) { return displayer.buildingModelsPath + "/" + name + ".tscn"; }
 }
