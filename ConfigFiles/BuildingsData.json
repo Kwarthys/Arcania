@@ -13,11 +13,15 @@
 			[
 				{
 					"Type": "Projectile",
-					"Cost": { "Mana": 10 },
-					"Range": 20,
+					"Range": 15,
+					"TempDamage": 100,
+					"TempCost": { "Mana": 10 },
+					"TempPeriod": 1.0,
 					"Effects":
 					[
 						{
+							"Cost": { "Mana": 10 },
+							"Period": 5.0,
 							"Magic": "Arcane",
 							"Damage": 60,
 							"Effects":
@@ -37,13 +41,29 @@
 		{
 			"Name": "BasicHarvester",
 			"Health": 50,
-			"Footprint" : {"X":3, "Y":3},
+			"Footprint" : {"X":2, "Y":2},
 			"Cost": {"Mana": 20},
-			"Economy":
-			{
-				"Gain": {"Mana": 1},
-				"Cost": {"Mana": 0, "Fire": 0, "Elec":0, "Stone":0}
-			}
+			"Effects":
+			[
+				{
+					"Gain": {"Mana": 2.0},
+					"Period": 2.0
+				}
+			]
+		},
+		{
+			"Name": "BasicRefiner",
+			"Health": 50,
+			"Footprint" : {"X":2, "Y":2},
+			"Cost": {"Mana": 20},
+			"Effects":
+			[
+				{
+					"Gain": {"Fire": 2.0},
+					"Cost": {"Mana": 10.0},
+					"Period": 2.0
+				}
+			]
 		}
 	]
 }

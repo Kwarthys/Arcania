@@ -16,12 +16,15 @@ public class BuildingsManager
 
 	private int updateOffset = 0;
 
+	private JSONFormats.BuildingsData buildingsStaticData;
+	private Dictionary<string, int> buildingStaticDataIndexPerBuildingName = new();
+
 	private BuildingGrid grid = new();
 	public void LoadData(string _path)
 	{
-		JSONFormats.BuildingsData data = JSONManager.Read<JSONFormats.BuildingsData>(_path);
+		buildingsStaticData = JSONManager.Read<JSONFormats.BuildingsData>(_path);
 
-		foreach(JSONFormats.Building building in data.Buildings)
+		foreach(JSONFormats.Building building in buildingsStaticData.Buildings)
 		{
 			allBuildingNames.Add(building.Name);
 		}
@@ -36,15 +39,9 @@ public class BuildingsManager
 		grid.Initialize(_gridSize.X, _gridSize.Y);
 	}
 
-	public bool AddBuilding(Vector2I _gridPos, bool _isTower)
+	public bool AddBuilding(Vector2I _gridPos, string _buildingName)
 	{
-		Building candidate;
-
-		if(_isTower)
-			candidate = Building.MakeBasicTower();
-		else
-			candidate = Building.MakeBasicHarvester();
-
+		Building candidate = Building.ConstructBuildingFromStaticData(GetBuildingStaticData(_buildingName));
 		candidate.SetPosition(_gridPos);
 
 		if(grid.Available(candidate.bbox) == false)
@@ -64,12 +61,37 @@ public class BuildingsManager
 			Building b = buildings[index];
 
 			b.weapons?.ForEach((w) => w.Update(_dt, b.GetCenterPosition(), enemyManager, tree, ref resourcesManager));
-			b.refiners?.ForEach((r) => r.Update(_dt, ref resourcesManager.playerResources));
+			b.effects?.ForEach((r) => r.Update(_dt, ref resourcesManager));
 		}
 
 		// Make sure all buildings have the chance to access resources
 		updateOffset++;
 		if(updateOffset >= buildings.Count)
 			updateOffset = 0;
+	}
+
+
+
+	private JSONFormats.Building GetBuildingStaticData(string _name)
+	{
+		if(buildingStaticDataIndexPerBuildingName.ContainsKey(_name) == false)
+		{
+			for(int i = 0; i < buildingsStaticData.Buildings.Count; ++i)
+			{
+				if(buildingsStaticData.Buildings[i].Name == _name)
+				{
+					buildingStaticDataIndexPerBuildingName.Add(_name, i);
+					break;
+				}
+			}
+		}
+
+		if(buildingStaticDataIndexPerBuildingName.ContainsKey(_name) == false)
+		{
+			GD.PrintErr("Could not find StaticData for Building " + _name);
+			return null;
+		}
+
+		return buildingsStaticData.Buildings[buildingStaticDataIndexPerBuildingName[_name]];
 	}
 }

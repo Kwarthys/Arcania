@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Resources;
 
 public class Building
@@ -8,24 +9,40 @@ public class Building
 	public BoundingBoxI bbox = new(0, 0, 1, 1);
 	public float health = 100.0f;
 	public List<Weapon> weapons; // Apply damage effects to enemies
-	public List<Refiner> refiners; // Make changes to player's resources
 	public string buildingName { get; private set; }
+	public List<BuildingEffect> effects = new(); // only economy effects for now
 
-	public static Building MakeBasicTower()
+	public static Building ConstructBuildingFromStaticData(JSONFormats.Building _staticData)
 	{
-		Building tower = new();
-		tower.weapons = [new()];
-		tower.buildingName = "BasicTower";
-		return tower;
-	}
+		Building b = new();
+		b.buildingName = _staticData.Name;
+		b.health = _staticData.Health;
+		b.bbox = new(0, 0, _staticData.Footprint.X, _staticData.Footprint.Y);
 
-	public static Building MakeBasicHarvester()
-	{
-		Building harvester = new();
-		harvester.bbox = new(0, 0, 2, 2);
-		harvester.refiners = [new()];
-		harvester.buildingName = "BasicHarvester";
-		return harvester;
+		if(_staticData.Weapons != null)
+		{
+			b.weapons = new();
+			foreach(JSONFormats.Weapon weaponData in _staticData.Weapons)
+			{
+				b.weapons.Add(new());
+				Weapon w = b.weapons.Last();
+				w.range = weaponData.Range;
+				w.damage = weaponData.TempDamage;
+				w.shotCost = new(weaponData.TempCost);
+				w.firePeriod = weaponData.TempPeriod;
+			}
+		}
+
+		if(_staticData.Effects != null)
+		{
+			b.effects = new();
+			foreach(JSONFormats.Effect effectData in _staticData.Effects)
+			{
+				b.effects.Add(new(effectData));
+			}
+		}
+
+		return b;
 	}
 
 	public Vector2I GetPosition() { return new(bbox.x, bbox.y); }
@@ -43,6 +60,7 @@ public class Weapon
 	public float damage = 100.0f;
 	public float firePeriod = 2.0f;
 	public int targetIndex = -1;
+	public List<BuildingEffect> effects = new();
 
 	public Price shotCost = new(5.0f, 0.0f, 0.0f, 0.0f);
 	private Price accumulator = new();
@@ -110,26 +128,64 @@ public class Weapon
 	}
 }
 
-public class Refiner
+public class BuildingEffect // Used to represent both damaging and economical powers of buildings
 {
-	public Price delta = new(1.0f, 0.0f, 0.0f, 0.0f);
-	public float period = 1.0f;
-	public float activityRatio = 1.0f;
-	private double dtCounter = 0.0f;
+	public Price gain;
+	public Price cost;
+	private Price costAccumulator = new();
+	public float period;
+	//public float damage;
+	//public float activityRatio = 1.0f; // Buildings can be slowed down to preserve resources
+	public float dtAccumulator = 0.0f;
+	public bool timerBasedPeriod = true;
+	//public List<BuildingEffect> nestedEffects = new();
 
-	public void Update(double _dt, ref Price _playerResources)
+	public BuildingEffect(JSONFormats.Effect _effectData)
 	{
-		if(dtCounter < period)
-		{
-			dtCounter += _dt;
-			return;
-		}
+		gain = new(_effectData.Gain);
+		cost = new(_effectData.Cost);
+		// damage = _effectData.Damage; // simplified for now
+		period = _effectData.Period;
 
-		Price actualDelta = delta * activityRatio;
-		if(_playerResources >= -actualDelta)
+		// simplified for now
+		//foreach(JSONFormats.Effect nestedEffect in _effectData.Effects)
+		//{
+		//	nestedEffects.Add(new(nestedEffect));
+		//}
+
+		// Finished reading, now precompute some stuff
+
+		// If no cost, period is only based on time.
+		// With cost, this cost will be consumed by the building during the given period, no need for timers
+		timerBasedPeriod = cost.IsZero();
+	}
+
+	public void Update(double _dt, ref ResourcesManager _playerResources)
+	{
+		if(timerBasedPeriod)
 		{
-			_playerResources += delta * activityRatio;
-			dtCounter = 0.0;
+			dtAccumulator += (float)_dt;
+			if(dtAccumulator > period)
+			{
+				dtAccumulator -= period;
+				_playerResources.Credit(gain);
+			}
+		}
+		else
+		{
+			Price consumption = cost * ((float)_dt / period); // * activityRatio; // keep it simple for now
+			if(_playerResources.Afford(consumption))
+			{
+				_playerResources.Pay(consumption);
+				costAccumulator += consumption;
+
+				if(costAccumulator >= cost)
+				{
+					costAccumulator -= cost;
+					_playerResources.Credit(gain);
+				}
+			}
+
 		}
 	}
 }

@@ -12,10 +12,9 @@ public partial class InputManager : Node3D
 	public override void _UnhandledInput(InputEvent @event)
 	{
 		bool isMain = @event.IsActionReleased("MainInteraction");
-		bool isSec = @event.IsActionReleased("SecondaryInteraction");
-		if(isMain || isSec)
+		if(isMain)
 		{
-			gameManager.AddBuilding(GetMousePosRayCast(), isMain);
+			gameManager.AddBuilding(GetMousePosRayCast());
 		}
 	}
 

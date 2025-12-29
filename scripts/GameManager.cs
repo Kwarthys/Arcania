@@ -33,6 +33,8 @@ public partial class GameManager : Node
 		displayer.Initialize(new(tree.root.boundingBox.w * -0.5f, tree.root.boundingBox.h * -0.5f), buildingsManager.allBuildingNames);
 
 		builderMenu.Initialize(this, buildingsManager.allBuildingNames);
+
+		resourcesManager.Credit(new(50.0f, 0.0f, 0.0f, 0.0f)); // starting resources
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -71,10 +73,10 @@ public partial class GameManager : Node
 		}
 	}
 
-	public void AddBuilding(Vector3 _pos, bool _isTower)
+	public void AddBuilding(Vector3 _pos)
 	{
 		Vector2I gridPos = displayer.WorldToGrid(_pos);
-		buildingsManager.AddBuilding(gridPos, _isTower);
+		buildingsManager.AddBuilding(gridPos, builderMenu.selectedBuilding);
 	}
 
 	public void OnBuildingAdded(Building _b) { displayer.AddBuilding(_b); }

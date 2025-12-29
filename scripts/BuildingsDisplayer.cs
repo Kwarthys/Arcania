@@ -71,10 +71,7 @@ public partial class BuildingsDisplayer : Node
 	private void PreLoadBuildingsModel(List<string> _names)
 	{
 		foreach(string name in _names)
-		{
-			GD.Print("Trying to load " + BuildingNameToScene(name));
 			ResourceLoader.LoadThreadedRequest(BuildingNameToScene(name));
-		}
 	}
 
 	public void MoveGhost(Vector3 _worldPos) { ghostManager.UpdateGhost(_worldPos); }

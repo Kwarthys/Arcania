@@ -1,11 +1,9 @@
-[gd_scene load_steps=20 format=3 uid="uid://btp0dvhkjxep"]
+[gd_scene load_steps=18 format=3 uid="uid://btp0dvhkjxep"]
 
 [ext_resource type="Script" uid="uid://d0c1dr5w4epx4" path="res://scripts/GameManager.cs" id="1_0f027"]
 [ext_resource type="Script" uid="uid://751yj3svkc4v" path="res://scripts/rotator.gd" id="1_gyfs4"]
 [ext_resource type="Script" uid="uid://dk8q0aajeogni" path="res://scripts/Utils/DrawDebugManager.cs" id="4_8mm7a"]
 [ext_resource type="Script" uid="uid://daf82iewejgfu" path="res://scripts/fpsCounter.gd" id="4_d5x1h"]
-[ext_resource type="PackedScene" uid="uid://cbfq7hji05gf8" path="res://prefabs/Buildings/BasicTower.tscn" id="4_hq1ik"]
-[ext_resource type="PackedScene" uid="uid://c4211137nxxaa" path="res://prefabs/Buildings/BasicHarvester.tscn" id="5_66tet"]
 [ext_resource type="Script" uid="uid://ch7wdu0bi0iq4" path="res://scripts/ModelsDisplayer.cs" id="6_66tet"]
 [ext_resource type="Script" uid="uid://cw638jn5oj5ce" path="res://scripts/InputManager.cs" id="6_nfk4m"]
 [ext_resource type="Script" uid="uid://ddo610n3xwx14" path="res://scripts/UIManagement/ResourceDisplayManager.cs" id="9_7ycvg"]
@@ -79,8 +77,6 @@ builderMenu = NodePath("../../GameUI/BuilderMenu")
 [node name="ModelsDisplayer" type="Node" parent="Managers/GameManager"]
 script = ExtResource("6_66tet")
 unitsMesh = SubResource("SphereMesh_wr18j")
-turretModel = ExtResource("4_hq1ik")
-harvesterModel = ExtResource("5_66tet")
 buildingModelsPath = "res://prefabs/Buildings/"
 
 [node name="QuadTreeDebugManager" type="Node" parent="Managers"]
@@ -184,6 +180,7 @@ anchor_bottom = 1.0
 offset_top = -54.0
 grow_horizontal = 2
 grow_vertical = 0
+mouse_filter = 2
 theme_override_constants/margin_left = 8
 theme_override_constants/margin_top = 8
 theme_override_constants/margin_right = 8
@@ -191,6 +188,7 @@ theme_override_constants/margin_bottom = 8
 
 [node name="HBoxContainer" type="HBoxContainer" parent="GameUI/BuilderMenu/MarginContainer"]
 layout_mode = 2
+mouse_filter = 2
 theme_override_constants/separation = 8
 
 [node name="Button" type="Button" parent="GameUI/BuilderMenu/MarginContainer/HBoxContainer"]

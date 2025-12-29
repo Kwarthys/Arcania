@@ -9,7 +9,7 @@ public class ResourcesManager
 
 	public bool Afford(Price _p) { return playerResources >= _p; }
 	public void Pay(Price _p) { playerResources -= _p; }
-	public void Add(Price _p) { playerResources += _p; }
+	public void Credit(Price _p) { playerResources += _p; }
 
 	public bool tryPay(Price _p)
 	{
@@ -22,7 +22,6 @@ public class ResourcesManager
 	}
 
 	public enum Resource { Mana, Fire, Elec, Stone };
-
 }
 
 public class Price
@@ -53,11 +52,23 @@ public class Price
 		amounts.Add(ResourcesManager.Resource.Stone, _stone);
 	}
 
+	public Price(JSONFormats.Cost _jsonCost) : this(_jsonCost.Mana, _jsonCost.Fire, _jsonCost.Elec, _jsonCost.Stone) { }
+
 	public float Get(ResourcesManager.Resource _r)
 	{
 		if(amounts.ContainsKey(_r) == false)
 			throw new Exception("Price Dictionnary does not contain asked resource " + _r);
 		return amounts[_r];
+	}
+
+	public bool IsZero()
+	{
+		foreach(KeyValuePair<ResourcesManager.Resource, float> pair in amounts)
+		{
+			if(Mathf.Abs(pair.Value) > Mathf.Epsilon)
+				return false;
+		}
+		return true;
 	}
 
 	public float this[ResourcesManager.Resource key]

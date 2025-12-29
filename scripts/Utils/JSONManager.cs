@@ -26,6 +26,7 @@ namespace JSONFormats
 		public Footprint Footprint { get; set; }
 		public Cost Cost { get; set; }
 		public IList<Effect> Effects { get; set; } // <- Effects applied on the building
+		public IList<Weapon> Weapons { get; set; } // <- Effects applied on enemy targets
 	}
 
 	public class Cost
@@ -45,9 +46,11 @@ namespace JSONFormats
 	public class Weapon // <- Applies effects to closest target
 	{
 		public string Type { get; set; } = "Projectile";
-		public Cost Cost { get; set; }
 		public float Range { get; set; }
 		public IList<Effect> Effects { get; set; }
+		public float TempDamage { get; set; } = 0.0f;
+		public float TempPeriod { get; set; } = 0.0f;
+		public Cost TempCost { get; set; } = new();
 	}
 
 	public class Effect
@@ -57,8 +60,8 @@ namespace JSONFormats
 		public float Damage { get; set; } = 0.0f;
 		public float Area { get; set; } = 0.0f;
 		public string Affects { get; set; } = "Hostile";
-		public Cost Cost { get; set; }
-		public Cost Gain { get; set; } // What ressources an effect gives to the player
+		public Cost Gain { get; set; } = new();
+		public Cost Cost { get; set; } = new();
 		public float Period { get; set; } = -1.0f;// negative or zero for a ONCE effect
 	}
 }

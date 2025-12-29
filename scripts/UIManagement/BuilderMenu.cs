@@ -43,6 +43,13 @@ public partial class BuilderMenu : Control
 			OnCancel();
 	}
 
+	public override void _UnhandledInput(InputEvent @event)
+	{
+		if(@event.IsActionReleased("SecondaryInteraction"))
+			OnCancel();
+	}
+
+
 	private void OnCancel()
 	{
 		if(selectedBuilding == "")
