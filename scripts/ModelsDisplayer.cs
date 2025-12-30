@@ -35,7 +35,7 @@ public partial class ModelsDisplayer : Node
 	public void AddBuilding(Building _b) { buildingsDisplayer?.AddBuilding(_b); }
 	public void RemoveBuilding(Building _b) { buildingsDisplayer?.RemoveBuilding(_b); }
 	public void MoveGhost(Vector3 _worldPos) { buildingsDisplayer?.MoveGhost(_worldPos); }
-	public void UpdateBuildingGhost(string _name) { buildingsDisplayer?.ChangeGhost(_name); }
+	public void UpdateBuildingGhost(string _name, bool _offsetCenter) { buildingsDisplayer?.ChangeGhost(_name, _offsetCenter); }
 
 	public Vector3 GridToWorld(Vector2I _gridPos)
 	{
@@ -59,7 +59,6 @@ public partial class ModelsDisplayer : Node
 
 	public Vector3 SnapToGrid(Vector3 _worldPos)
 	{
-		//return new(Mathf.Round(_worldPos.X), Mathf.Round(_worldPos.Y), Mathf.Round(_worldPos.Z));
-		return GridToWorld(WorldToGrid(_worldPos));
+		return new(Mathf.Round(_worldPos.X), 0.0f, Mathf.Round(_worldPos.Z));
 	}
 }

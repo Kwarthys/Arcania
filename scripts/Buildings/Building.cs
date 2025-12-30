@@ -49,8 +49,8 @@ public class Building
 	public Vector2 GetCenterPosition() { return new(bbox.x + bbox.w / 2.0f, bbox.y + bbox.h / 2.0f); }
 	public void SetPosition(Vector2I _pos)
 	{
-		bbox.x = _pos.X - bbox.w / 2;
-		bbox.y = _pos.Y - bbox.h / 2;
+		bbox.x = _pos.X;
+		bbox.y = _pos.Y;
 	}
 }
 

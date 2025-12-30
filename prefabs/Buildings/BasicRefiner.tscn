@@ -1,8 +1,8 @@
 [gd_scene load_steps=2 format=3 uid="uid://ba3ag0m35lsnc"]
 
 [sub_resource type="TorusMesh" id="TorusMesh_1jvov"]
-inner_radius = 0.2
-outer_radius = 0.9
+inner_radius = 1.0
+outer_radius = 1.8
 
 [node name="BasicRefiner" type="Node3D"]
 

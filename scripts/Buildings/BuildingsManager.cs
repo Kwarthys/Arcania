@@ -42,7 +42,9 @@ public class BuildingsManager
 	public bool AddBuilding(Vector2I _gridPos, string _buildingName)
 	{
 		Building candidate = Building.ConstructBuildingFromStaticData(GetBuildingStaticData(_buildingName));
-		candidate.SetPosition(_gridPos);
+		int xCenterOffset = Mathf.FloorToInt(candidate.bbox.w * 0.5f);
+		int yCenterOffset = Mathf.FloorToInt(candidate.bbox.h * 0.5f);
+		candidate.SetPosition(_gridPos - new Vector2I(xCenterOffset, yCenterOffset));
 
 		if(grid.Available(candidate.bbox) == false)
 			return false;
@@ -70,9 +72,7 @@ public class BuildingsManager
 			updateOffset = 0;
 	}
 
-
-
-	private JSONFormats.Building GetBuildingStaticData(string _name)
+	public JSONFormats.Building GetBuildingStaticData(string _name)
 	{
 		if(buildingStaticDataIndexPerBuildingName.ContainsKey(_name) == false)
 		{

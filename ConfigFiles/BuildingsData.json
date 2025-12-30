@@ -15,7 +15,7 @@
 					"Type": "Projectile",
 					"Range": 15,
 					"TempDamage": 100,
-					"TempCost": { "Mana": 10 },
+					"TempCost": { "Mana": 1 },
 					"TempPeriod": 1.0,
 					"Effects":
 					[
@@ -54,7 +54,7 @@
 		{
 			"Name": "BasicRefiner",
 			"Health": 50,
-			"Footprint" : {"X":2, "Y":2},
+			"Footprint" : {"X":4, "Y":4},
 			"Cost": {"Mana": 20},
 			"Effects":
 			[

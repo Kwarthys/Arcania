@@ -55,7 +55,7 @@ shape = SubResource("WorldBoundaryShape3D_7ycvg")
 transform = Transform3D(-1, 5.9286602e-08, -6.4248276e-08, -6.3387757e-09, 0.68380886, 0.7296612, 8.7192674e-08, 0.7296612, -0.68380886, 0, 20, -30)
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="Scenery"]
-transform = Transform3D(0.5738473, -0.59332824, 0.56450117, -0.067744784, 0.65253496, 0.7547242, -0.8161557, -0.47133774, 0.33426028, 0, 19.137554, 0)
+transform = Transform3D(-0.6240445, -0.61793387, 0.47825152, -0.06774477, 0.65253514, 0.7547242, -0.7784471, 0.4385826, -0.44907352, 0, 19.137554, 0)
 light_energy = 1.5
 shadow_enabled = true
 directional_shadow_mode = 1

@@ -76,10 +76,10 @@ public partial class BuildingsDisplayer : Node
 
 	public void MoveGhost(Vector3 _worldPos) { ghostManager.UpdateGhost(_worldPos); }
 
-	public void ChangeGhost(string _name)
+	public void ChangeGhost(string _name, bool _offsetCenter)
 	{
 		Node3D model = InstantiateBuildingModel(_name);
-		ghostManager.ChangeGhost(model);
+		ghostManager.ChangeGhost(model, _offsetCenter);
 		if(model != null)
 			AddChild(model);
 	}
