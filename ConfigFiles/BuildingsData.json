@@ -7,8 +7,9 @@
 			"Footprint": { "X": 1, "Y":1},
 			"Cost":
 			{
-				"Mana": 100
+				"Mana": 10
 			},
+			"BuildTime": 5,
 			"Weapons":
 			[
 				{
@@ -16,7 +17,7 @@
 					"Range": 15,
 					"TempDamage": 100,
 					"TempCost": { "Mana": 1 },
-					"TempPeriod": 1.0,
+					"TempPeriod": 2.0,
 					"Effects":
 					[
 						{
@@ -43,6 +44,7 @@
 			"Health": 50,
 			"Footprint" : {"X":2, "Y":2},
 			"Cost": {"Mana": 20},
+			"BuildTime": 10,
 			"Effects":
 			[
 				{
@@ -56,12 +58,13 @@
 			"Health": 50,
 			"Footprint" : {"X":4, "Y":4},
 			"Cost": {"Mana": 20},
+			"BuildTime": 10,
 			"Effects":
 			[
 				{
-					"Gain": {"Fire": 2.0},
-					"Cost": {"Mana": 10.0},
-					"Period": 2.0
+					"Gain": {"Fire": 5.0},
+					"Cost": {"Mana": 50.0},
+					"Period": 5.0
 				}
 			]
 		}

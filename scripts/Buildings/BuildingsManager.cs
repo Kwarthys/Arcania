@@ -6,7 +6,6 @@ using System.Linq;
 
 public class BuildingsManager
 {
-	private PackedScene turretModel;
 	private EnemyManager enemyManager = null;
 	private ResourcesManager resourcesManager = null;
 	private GameManager gameManager;
@@ -60,10 +59,7 @@ public class BuildingsManager
 		for(int i = 0; i < buildings.Count; ++i)
 		{
 			int index = (i + updateOffset) % buildings.Count;
-			Building b = buildings[index];
-
-			b.weapons?.ForEach((w) => w.Update(_dt, b.GetCenterPosition(), enemyManager, tree, ref resourcesManager));
-			b.effects?.ForEach((r) => r.Update(_dt, ref resourcesManager));
+			buildings[index].Update(_dt, resourcesManager, enemyManager, tree);
 		}
 
 		// Make sure all buildings have the chance to access resources

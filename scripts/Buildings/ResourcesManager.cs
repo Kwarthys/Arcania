@@ -7,7 +7,7 @@ public class ResourcesManager
 {
 	public Price playerResources = new();
 
-	public bool Afford(Price _p) { return playerResources >= _p; }
+	public bool Afford(Price _p) { return playerResources.AllAboveOrEqual(_p); }
 	public void Pay(Price _p) { playerResources -= _p; }
 	public void Credit(Price _p) { playerResources += _p; }
 
@@ -19,6 +19,27 @@ public class ResourcesManager
 			return true;
 		}
 		return false;
+	}
+
+	public bool TryConsume(double _dt, Price _cost, float _period, ref Price _accumulator, float _activityRatio = 1.0f, bool _allowOvershoot = true)
+	{
+		Price consumption = _cost * ((float)_dt / _period) * _activityRatio;
+		if(_allowOvershoot == false)
+		{
+			if((_accumulator + consumption).AnyAbove(_cost))
+			{
+				consumption = _cost - _accumulator; // Get just what's needed
+			}
+		}
+
+		if(Afford(consumption))
+		{
+			Pay(consumption);
+			_accumulator += consumption;
+			return true; // sucessfully charged accumulator a bit
+		}
+
+		return false; // Could not sustain charge
 	}
 
 	public enum Resource { Mana, Fire, Elec, Stone };
@@ -77,6 +98,97 @@ public class Price
 		set => amounts[key] = value;
 	}
 
+	public bool CanPay(Price _price) { return AllAboveOrEqual(_price); }
+
+	public bool AllAbove(Price _price)
+	{
+		foreach(KeyValuePair<ResourcesManager.Resource, float> pair in amounts)
+		{
+			if(pair.Value <= _price[pair.Key])
+				return false;
+		}
+		return true;
+	}
+
+	public bool AllAboveOrEqual(Price _price)
+	{
+		foreach(KeyValuePair<ResourcesManager.Resource, float> pair in amounts)
+		{
+			if(pair.Value < _price[pair.Key])
+				return false;
+		}
+		return true;
+	}
+
+	public bool AnyAbove(Price _max)
+	{
+		foreach(KeyValuePair<ResourcesManager.Resource, float> pair in amounts)
+		{
+			if(pair.Value > _max[pair.Key])
+				return true;
+		}
+		return false;
+	}
+
+	public bool AnyAboveOrEqual(Price _max)
+	{
+		foreach(KeyValuePair<ResourcesManager.Resource, float> pair in amounts)
+		{
+			if(pair.Value >= _max[pair.Key])
+				return true;
+		}
+		return false;
+	}
+
+	public bool AllBelow(Price _price)
+	{
+		foreach(KeyValuePair<ResourcesManager.Resource, float> pair in amounts)
+		{
+			if(pair.Value >= _price[pair.Key])
+				return false;
+		}
+		return true;
+	}
+
+	public bool AllBelowOrEqual(Price _price)
+	{
+		foreach(KeyValuePair<ResourcesManager.Resource, float> pair in amounts)
+		{
+			if(pair.Value > _price[pair.Key])
+				return false;
+		}
+		return true;
+	}
+
+	public bool AnyBelow(Price _price)
+	{
+		foreach(KeyValuePair<ResourcesManager.Resource, float> pair in amounts)
+		{
+			if(pair.Value < _price[pair.Key])
+				return true;
+		}
+		return false;
+	}
+
+	public bool AnyBelowOrEqual(Price _price)
+	{
+		foreach(KeyValuePair<ResourcesManager.Resource, float> pair in amounts)
+		{
+			if(pair.Value <= _price[pair.Key])
+				return true;
+		}
+		return false;
+	}
+
+	public void Ceil(Price _max)
+	{
+		foreach(KeyValuePair<ResourcesManager.Resource, float> pair in amounts)
+		{
+			if(pair.Value > _max[pair.Key])
+				amounts[pair.Key] = _max[pair.Key];
+		}
+	}
+
 	public static Price operator -(Price _a)
 	{
 		Price p = new();
@@ -104,46 +216,6 @@ public class Price
 		foreach(KeyValuePair<ResourcesManager.Resource, float> pair in _p.amounts)
 			r[pair.Key] = _p[pair.Key] * _coef;
 		return r;
-	}
-
-	public static bool operator >=(Price _a, Price _b)
-	{
-		foreach(KeyValuePair<ResourcesManager.Resource, float> pair in _a.amounts)
-		{
-			if(pair.Value < _b[pair.Key])
-				return false;
-		}
-		return true;
-	}
-
-	public static bool operator <=(Price _a, Price _b)
-	{
-		foreach(KeyValuePair<ResourcesManager.Resource, float> pair in _a.amounts)
-		{
-			if(pair.Value > _b[pair.Key])
-				return false;
-		}
-		return true;
-	}
-
-	public static bool operator <(Price _a, Price _b)
-	{
-		foreach(KeyValuePair<ResourcesManager.Resource, float> pair in _a.amounts)
-		{
-			if(pair.Value < _b[pair.Key])
-				return true;
-		}
-		return false;
-	}
-
-	public static bool operator >(Price _a, Price _b)
-	{
-		foreach(KeyValuePair<ResourcesManager.Resource, float> pair in _a.amounts)
-		{
-			if(pair.Value > _b[pair.Key])
-				return true;
-		}
-		return false;
 	}
 
 	public static bool operator true(Price _p)

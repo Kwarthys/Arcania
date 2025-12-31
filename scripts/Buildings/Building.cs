@@ -1,16 +1,15 @@
 using Godot;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Resources;
 
 public class Building
 {
 	public BoundingBoxI bbox = new(0, 0, 1, 1);
 	public float health = 100.0f;
-	public List<Weapon> weapons; // Apply damage effects to enemies
+	public List<Weapon> weapons; // Apply damage (todo effects) to enemies
 	public string buildingName { get; private set; }
-	public List<BuildingEffect> effects = new(); // only economy effects for now
+	public List<Effect> effects = new(); // only economy effects for now
+	public Constructor constructor { get; private set; }
 
 	public static Building ConstructBuildingFromStaticData(JSONFormats.Building _staticData)
 	{
@@ -18,6 +17,10 @@ public class Building
 		b.buildingName = _staticData.Name;
 		b.health = _staticData.Health;
 		b.bbox = new(0, 0, _staticData.Footprint.X, _staticData.Footprint.Y);
+
+		Price cost = new(_staticData.Cost);
+		if(cost.IsZero() == false) // Don't create constructor for free buildings
+			b.constructor = new(cost, _staticData.BuildTime);
 
 		if(_staticData.Weapons != null)
 		{
@@ -45,6 +48,22 @@ public class Building
 		return b;
 	}
 
+	public void Update(double _dt, ResourcesManager _playerResources, EnemyManager _enemyManager, QuadTree _tree)
+	{
+		if(constructor != null)
+		{
+			constructor.Update(_dt, _playerResources);
+			if(constructor.completion > 1.0f - Mathf.Epsilon)
+			{
+				constructor = null; // Construction complete, remove constructor
+			}
+			return;
+		}
+
+		weapons?.ForEach((w) => w.Update(_dt, GetCenterPosition(), _enemyManager, _tree, _playerResources));
+		effects?.ForEach((r) => r.Update(_dt, _playerResources));
+	}
+
 	public Vector2I GetPosition() { return new(bbox.x, bbox.y); }
 	public Vector2 GetCenterPosition() { return new(bbox.x + bbox.w / 2.0f, bbox.y + bbox.h / 2.0f); }
 	public void SetPosition(Vector2I _pos)
@@ -60,20 +79,16 @@ public class Weapon
 	public float damage = 100.0f;
 	public float firePeriod = 2.0f;
 	public int targetIndex = -1;
-	public List<BuildingEffect> effects = new();
+	//public List<Effect> effects = new();
 
 	public Price shotCost = new(5.0f, 0.0f, 0.0f, 0.0f);
 	private Price accumulator = new();
 
-	public void Update(double _dt, Vector2 _pos, EnemyManager _enemyManager, QuadTree _tree, ref ResourcesManager _playerResources)
+	public void Update(double _dt, Vector2 _pos, EnemyManager _enemyManager, QuadTree _tree, ResourcesManager _playerResources)
 	{
-		if(accumulator < shotCost)
+		if(accumulator.CanPay(shotCost) == false)
 		{
-			Price deltaPrice = shotCost * ((float)_dt / firePeriod);
-			if(_playerResources.tryPay(deltaPrice))
-			{
-				accumulator += deltaPrice;
-			}
+			_playerResources.TryConsume(_dt, shotCost, firePeriod, ref accumulator);
 		}
 		bool justUpdatedTarget = false;
 
@@ -118,74 +133,12 @@ public class Weapon
 			}
 
 			// Shoot Check
-			if(accumulator >= shotCost)
+			if(accumulator.CanPay(shotCost))
 			{
 				// shoot ! Will later apply the weapon's effect
 				accumulator -= shotCost;
 				_enemyManager.Damage(targetIndex, damage);
 			}
-		}
-	}
-}
-
-public class BuildingEffect // Used to represent both damaging and economical powers of buildings
-{
-	public Price gain;
-	public Price cost;
-	private Price costAccumulator = new();
-	public float period;
-	//public float damage;
-	//public float activityRatio = 1.0f; // Buildings can be slowed down to preserve resources
-	public float dtAccumulator = 0.0f;
-	public bool timerBasedPeriod = true;
-	//public List<BuildingEffect> nestedEffects = new();
-
-	public BuildingEffect(JSONFormats.Effect _effectData)
-	{
-		gain = new(_effectData.Gain);
-		cost = new(_effectData.Cost);
-		// damage = _effectData.Damage; // simplified for now
-		period = _effectData.Period;
-
-		// simplified for now
-		//foreach(JSONFormats.Effect nestedEffect in _effectData.Effects)
-		//{
-		//	nestedEffects.Add(new(nestedEffect));
-		//}
-
-		// Finished reading, now precompute some stuff
-
-		// If no cost, period is only based on time.
-		// With cost, this cost will be consumed by the building during the given period, no need for timers
-		timerBasedPeriod = cost.IsZero();
-	}
-
-	public void Update(double _dt, ref ResourcesManager _playerResources)
-	{
-		if(timerBasedPeriod)
-		{
-			dtAccumulator += (float)_dt;
-			if(dtAccumulator > period)
-			{
-				dtAccumulator -= period;
-				_playerResources.Credit(gain);
-			}
-		}
-		else
-		{
-			Price consumption = cost * ((float)_dt / period); // * activityRatio; // keep it simple for now
-			if(_playerResources.Afford(consumption))
-			{
-				_playerResources.Pay(consumption);
-				costAccumulator += consumption;
-
-				if(costAccumulator >= cost)
-				{
-					costAccumulator -= cost;
-					_playerResources.Credit(gain);
-				}
-			}
-
 		}
 	}
 }
