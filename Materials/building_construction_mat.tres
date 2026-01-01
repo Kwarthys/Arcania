@@ -1,0 +1,10 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://dq1l5k7evyam"]
+
+[ext_resource type="Shader" uid="uid://cephdtxebl36w" path="res://Materials/building_construction_shader.gdshader" id="1_ie04i"]
+
+[resource]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("1_ie04i")
+shader_parameter/startEndHeights = Vector2(0, 8)
+shader_parameter/completion = 0.0

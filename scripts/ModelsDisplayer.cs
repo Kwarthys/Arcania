@@ -6,6 +6,7 @@ public partial class ModelsDisplayer : Node
 {
 	[Export] Mesh unitsMesh;
 	[Export] public string buildingModelsPath { get; private set; }
+	[Export] public Material constructionMaterial { get; private set; }
 	public Vector2 gridStart { get; private set; } = new(-25.0f, -25.0f);
 
 	private BuildingsDisplayer buildingsDisplayer;
@@ -31,6 +32,7 @@ public partial class ModelsDisplayer : Node
 	{
 		unitsDisplayer.UpdateDisplay(_enemyManager);
 		buildingsDisplayer.DrawTargetDebug(_enemyManager);
+		buildingsDisplayer.Update();
 	}
 	public void AddBuilding(Building _b) { buildingsDisplayer?.AddBuilding(_b); }
 	public void RemoveBuilding(Building _b) { buildingsDisplayer?.RemoveBuilding(_b); }

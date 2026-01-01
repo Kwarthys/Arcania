@@ -11,11 +11,49 @@ public partial class BuildingsDisplayer : Node
 
 	private Dictionary<string, PackedScene> buildingScenesPerName = new();
 
+	private Dictionary<Building, List<MeshInstance3D>> constructingBuildings = new();
+
 	public void Initialize(ModelsDisplayer _displayer, List<string> _buildingNames)
 	{
 		displayer = _displayer;
 		ghostManager.Initialize(displayer);
 		PreLoadBuildingsModel(_buildingNames);
+	}
+
+	public void Update()
+	{
+		List<Building> toRemove = null;
+		// Manage shader for building still under construction
+		foreach(KeyValuePair<Building, List<MeshInstance3D>> pair in constructingBuildings)
+		{
+			if(pair.Key.constructor == null)
+			{
+				if(toRemove == null)
+					toRemove = [pair.Key];
+				else
+					toRemove.Add(pair.Key);
+
+				continue; // Construction complete
+			}
+
+			float completion = pair.Key.constructor.completion;
+			foreach(MeshInstance3D meshInstance in pair.Value)
+			{
+				ShaderMaterial mat = (ShaderMaterial)meshInstance.MaterialOverride;
+				mat.SetShaderParameter("completion", completion);
+			}
+		}
+
+		if(toRemove == null)
+			return;
+
+		foreach(Building b in toRemove)
+		{
+			foreach(MeshInstance3D meshInstance in constructingBuildings[b])
+				meshInstance.MaterialOverride = null;
+
+			constructingBuildings.Remove(b);
+		}
 	}
 
 	public void AddBuilding(Building _b)
@@ -33,6 +71,44 @@ public partial class BuildingsDisplayer : Node
 		}
 
 		Reposition(_b);
+		MarkForConstruction(_b);
+	}
+
+	private void MarkForConstruction(Building _b)
+	{
+		if(_b.constructor == null)
+			return;
+
+		List<Node> toScan = [models[_b]];
+		List<MeshInstance3D> meshInstances = new();
+
+		Aabb bounds = new();
+
+		while(toScan.Count > 0)
+		{
+			Node scanning = toScan[0];
+			toScan.RemoveAt(0);
+
+			if(scanning is MeshInstance3D)
+			{
+				MeshInstance3D meshInstance = (MeshInstance3D)scanning;
+				meshInstances.Add(meshInstance);
+				bounds = bounds.Merge(meshInstance.GlobalTransform * meshInstance.GetAabb()); // Make that bounding box in World coordinates
+			}
+
+			foreach(Node n in scanning.GetChildren())
+				toScan.Add(n);
+		}
+
+		foreach(MeshInstance3D instance in meshInstances)
+		{
+			instance.MaterialOverride = (Material)displayer.constructionMaterial.Duplicate(true);
+			ShaderMaterial mat = (ShaderMaterial)instance.MaterialOverride;
+			mat.SetShaderParameter("completion", 0.0f);
+			mat.SetShaderParameter("startEndHeights", new Vector2(bounds.Position.Y, bounds.End.Y));
+		}
+
+		constructingBuildings.Add(_b, meshInstances);
 	}
 
 	public void RemoveBuilding(Building _b)

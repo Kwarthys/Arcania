@@ -44,7 +44,7 @@
 			"Health": 50,
 			"Footprint" : {"X":2, "Y":2},
 			"Cost": {"Mana": 20},
-			"BuildTime": 10,
+			"BuildTime": 3,
 			"Effects":
 			[
 				{
@@ -58,7 +58,7 @@
 			"Health": 50,
 			"Footprint" : {"X":4, "Y":4},
 			"Cost": {"Mana": 20},
-			"BuildTime": 10,
+			"BuildTime": 5,
 			"Effects":
 			[
 				{

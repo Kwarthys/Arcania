@@ -1,9 +1,10 @@
-[gd_scene load_steps=18 format=3 uid="uid://btp0dvhkjxep"]
+[gd_scene load_steps=19 format=3 uid="uid://btp0dvhkjxep"]
 
 [ext_resource type="Script" uid="uid://d0c1dr5w4epx4" path="res://scripts/GameManager.cs" id="1_0f027"]
 [ext_resource type="Script" uid="uid://751yj3svkc4v" path="res://scripts/rotator.gd" id="1_gyfs4"]
 [ext_resource type="Script" uid="uid://dk8q0aajeogni" path="res://scripts/Utils/DrawDebugManager.cs" id="4_8mm7a"]
 [ext_resource type="Script" uid="uid://daf82iewejgfu" path="res://scripts/fpsCounter.gd" id="4_d5x1h"]
+[ext_resource type="Material" uid="uid://dq1l5k7evyam" path="res://Materials/building_construction_mat.tres" id="4_wr18j"]
 [ext_resource type="Script" uid="uid://ch7wdu0bi0iq4" path="res://scripts/ModelsDisplayer.cs" id="6_66tet"]
 [ext_resource type="Script" uid="uid://cw638jn5oj5ce" path="res://scripts/InputManager.cs" id="6_nfk4m"]
 [ext_resource type="Script" uid="uid://ddo610n3xwx14" path="res://scripts/UIManagement/ResourceDisplayManager.cs" id="9_7ycvg"]
@@ -78,6 +79,7 @@ builderMenu = NodePath("../../GameUI/BuilderMenu")
 script = ExtResource("6_66tet")
 unitsMesh = SubResource("SphereMesh_wr18j")
 buildingModelsPath = "res://prefabs/Buildings/"
+constructionMaterial = ExtResource("4_wr18j")
 
 [node name="QuadTreeDebugManager" type="Node" parent="Managers"]
 script = ExtResource("4_8mm7a")
