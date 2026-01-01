@@ -18,7 +18,7 @@ public class Constructor
 	public void Update(double _dt, ResourcesManager _playerResources)
 	{
 		_playerResources.TryConsume(_dt, cost, buildTime, ref costAccumulator, 1.0f, false);
-		completion = costAccumulator.AllAboveOrEqual(cost) ? 1.0f : 0.0f; // will do fancy maths later
+		completion = costAccumulator.RatioOf(cost);
 		return;
 	}
 }

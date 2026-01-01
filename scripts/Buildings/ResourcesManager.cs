@@ -100,6 +100,24 @@ public class Price
 
 	public bool CanPay(Price _price) { return AllAboveOrEqual(_price); }
 
+	public float RatioOf(Price _ref)
+	{
+		float ratio = 0.0f;
+		int n = 0;
+		foreach(KeyValuePair<ResourcesManager.Resource, float> pair in amounts)
+		{
+			float refValue = _ref[pair.Key];
+			if(Mathf.Abs(refValue) > 0.0f) // Ingoring zeros from reference value
+			{
+				ratio += pair.Value / _ref[pair.Key];
+				n++;
+			}
+
+		}
+
+		return ratio / n;
+	}
+
 	public bool AllAbove(Price _price)
 	{
 		foreach(KeyValuePair<ResourcesManager.Resource, float> pair in amounts)
