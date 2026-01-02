@@ -20,8 +20,8 @@ public partial class GameManager : Node
 
 	public override void _Ready()
 	{
-		int n = 1000;
-		enemyManager.Initialize(n);
+		int n = 10;
+		enemyManager.Initialize(this, n);
 
 		tree = new(new(0.0f, 0.0f, 50.0f, 50.0f), enemyManager);
 
@@ -51,8 +51,7 @@ public partial class GameManager : Node
 		/** Quad Tree Update **/
 		List<int> orphanIndices = new();
 		tree.CheckDepartures(orphanIndices);
-
-		orphanIndices.ForEach((id) => tree.SubmitElement(id, enemyManager.positions[id]));
+		tree.SubmitElements(orphanIndices);
 
 		if(drawTreeDebug)
 			tree.DrawDebug(displayer.gridStart);
@@ -103,6 +102,7 @@ public partial class GameManager : Node
 
 	public void OnBuildingAdded(Building _b) { displayer.AddBuilding(_b); }
 	public void OnBuildingRemoved(Building _b) { displayer.RemoveBuilding(_b); }
+	public void OnEnemySpawn(List<int> _indices) { tree.SubmitElements(_indices); }
 	public void OnBuildingGhostChange(string _name)
 	{
 		bool offsetGhostCenter = false;

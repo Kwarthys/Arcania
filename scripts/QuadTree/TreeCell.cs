@@ -21,6 +21,11 @@ public class TreeCell
         unitsManager = _unitsManager;
     }
 
+    public void SubmitElements(List<int> _indices)
+    {
+        foreach(int id in _indices)
+            SubmitElement(id, unitsManager.GetPosition(id));
+    }
     public bool SubmitElement(int _id, Vector2 _position)
     {
         if(Contains(_position) == false)

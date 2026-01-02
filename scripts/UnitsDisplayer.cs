@@ -22,13 +22,7 @@ public partial class UnitsDisplayer : Node
 
 	public void UpdateDisplay(EnemyManager _enemyManager)
 	{
-		int meshesToDisplay = 0;
-		for(int i = 0; i < _enemyManager.count; ++i)
-		{
-			if(_enemyManager.Alive(i))
-				meshesToDisplay++;
-		}
-		multiMesh.Multimesh.InstanceCount = meshesToDisplay;
+		multiMesh.Multimesh.InstanceCount = _enemyManager.aliveCount;
 
 		int meshIndex = 0;
 		for(int i = 0; i < _enemyManager.count; ++i)

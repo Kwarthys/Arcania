@@ -17,7 +17,7 @@ albedo_color = Color(0.1481536, 0.08014498, 0.060781255, 1)
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_0f027"]
 material = SubResource("StandardMaterial3D_o3jxj")
-size = Vector2(50, 50)
+size = Vector2(1000, 1000)
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_66tet"]
 
@@ -72,6 +72,7 @@ script = ExtResource("1_gyfs4")
 [node name="GameManager" type="Node" parent="Managers" node_paths=PackedStringArray("displayer", "builderMenu")]
 script = ExtResource("1_0f027")
 BuildingsDataPath = "res://ConfigFiles/BuildingsData.json"
+drawTreeDebug = true
 displayer = NodePath("ModelsDisplayer")
 builderMenu = NodePath("../../GameUI/BuilderMenu")
 
