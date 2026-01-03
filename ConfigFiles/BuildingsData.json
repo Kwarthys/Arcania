@@ -67,6 +67,27 @@
 					"Period": 5.0
 				}
 			]
+		},
+		{
+			"Name": "Nexus",
+			"Buildable" : false,
+			"Footprint" : {"X":8, "Y":8},
+			"Weapons":
+			[
+				{
+					"Range": 30,
+					"TempDamage": 50,
+					"TempCost": { "Mana": 1.0 },
+					"TempPeriod": 4.0
+				}
+			],
+			"Effects":
+			[
+				{
+					"Gain": {"Mana": 1.0},
+					"Period": 2.0
+				}
+			]
 		}
 	]
 }

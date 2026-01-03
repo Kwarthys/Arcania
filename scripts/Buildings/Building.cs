@@ -18,9 +18,12 @@ public class Building
 		b.health = _staticData.Health;
 		b.bbox = new(0, 0, _staticData.Footprint.X, _staticData.Footprint.Y);
 
-		Price cost = new(_staticData.Cost);
-		if(cost.IsZero() == false) // Don't create constructor for free buildings
-			b.constructor = new(cost, _staticData.BuildTime);
+		if(_staticData.Cost != null)
+		{
+			Price cost = new(_staticData.Cost);
+			if(cost.IsZero() == false) // Don't create constructor for free buildings
+				b.constructor = new(cost, _staticData.BuildTime);
+		}
 
 		if(_staticData.Weapons != null)
 		{

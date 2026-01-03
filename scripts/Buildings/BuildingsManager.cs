@@ -12,6 +12,7 @@ public class BuildingsManager
 	private QuadTree tree = null;
 	public List<Building> buildings { get; private set; } = new();
 	public List<string> allBuildingNames { get; private set; } = new();
+	public List<string> allBuildableBuildingNames { get; private set; } = new();
 
 	private int updateOffset = 0;
 
@@ -26,6 +27,9 @@ public class BuildingsManager
 		foreach(JSONFormats.Building building in buildingsStaticData.Buildings)
 		{
 			allBuildingNames.Add(building.Name);
+
+			if(building.Buildable)
+				allBuildableBuildingNames.Add(building.Name);
 		}
 	}
 

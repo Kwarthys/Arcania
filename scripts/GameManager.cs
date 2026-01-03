@@ -33,9 +33,11 @@ public partial class GameManager : Node
 
 		displayer.Initialize(new(tree.root.boundingBox.w * -0.5f, tree.root.boundingBox.h * -0.5f), buildingsManager.allBuildingNames);
 
-		builderMenu.Initialize(this, buildingsManager.allBuildingNames);
+		builderMenu.Initialize(this, buildingsManager.allBuildableBuildingNames);
 
 		resourcesManager.Credit(new(100.0f, 0.0f, 0.0f, 0.0f)); // starting resources
+
+		buildingsManager.AddBuilding(displayer.WorldToGrid(new(0, 0, 0)), "Nexus"); // Central starting building
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
