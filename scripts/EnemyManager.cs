@@ -11,6 +11,7 @@ public class EnemyManager
 		public List<Vector2> positions { get; private set; } = new();
 		public List<Vector2> speeds { get; private set; } = new();
 		public List<int> targetIndex { get; private set; } = new();
+		public List<float> stoppingDistanceToTarget { get; private set; } = new();
 	}
 
 	public Units units = null;
@@ -48,6 +49,7 @@ public class EnemyManager
 		units.positions.Add(new());
 		units.speeds.Add(new());
 		units.targetIndex.Add(-1);
+		units.stoppingDistanceToTarget.Add(1.0f);
 
 		return count++; // As we return the index of the slot, increase total count after
 	}
@@ -89,8 +91,10 @@ public class EnemyManager
 			{
 				Building target = buildingsManager.buildings[units.targetIndex[i]];
 				Vector2 targetPos = target.GetCenterPosition();
+				float stoppingDistanceSquared = units.stoppingDistanceToTarget[i];
+				stoppingDistanceSquared *= stoppingDistanceSquared;
 
-				if((GetPosition(i) - targetPos).LengthSquared() < 5.0f)
+				if((GetPosition(i) - targetPos).LengthSquared() < stoppingDistanceSquared)
 					continue; // Already on target
 
 				units.positions[i] += dt * units.speeds[i];
@@ -212,5 +216,7 @@ public class EnemyManager
 		// Update speed toward target, as buildings don't move just compute it once
 		float speedNorm = units.speeds[_id].Length();
 		units.speeds[_id] = (_b.GetCenterPosition() - units.positions[_id]).Normalized() * speedNorm;
+
+		units.stoppingDistanceToTarget[_id] = 0.5f * _b.bbox.w * Mathf.Sqrt2; // Only working for square buildings, will do for now
 	}
 }
