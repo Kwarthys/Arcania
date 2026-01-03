@@ -30,7 +30,7 @@ public partial class UnitsDisplayer : Node
 			if(_enemyManager.Alive(i) == false)
 				continue;
 
-			Vector3 worldPos = displayer.GridToWorld(_enemyManager.positions[i]) + Vector3.Up * 0.5f;
+			Vector3 worldPos = displayer.GridToWorld(_enemyManager.GetPosition(i)) + Vector3.Up * 0.5f;
 			multiMesh.Multimesh.SetInstanceTransform(meshIndex++, new Transform3D(Basis.Identity, worldPos));
 		}
 	}

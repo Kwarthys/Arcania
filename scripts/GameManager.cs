@@ -21,7 +21,7 @@ public partial class GameManager : Node
 	public override void _Ready()
 	{
 		int n = 10;
-		enemyManager.Initialize(this, n);
+		enemyManager.Initialize(this, buildingsManager, n);
 
 		tree = new(new(0.0f, 0.0f, 50.0f, 50.0f), enemyManager);
 
@@ -35,7 +35,7 @@ public partial class GameManager : Node
 
 		builderMenu.Initialize(this, buildingsManager.allBuildingNames);
 
-		resourcesManager.Credit(new(50.0f, 0.0f, 0.0f, 0.0f)); // starting resources
+		resourcesManager.Credit(new(100.0f, 0.0f, 0.0f, 0.0f)); // starting resources
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -100,7 +100,12 @@ public partial class GameManager : Node
 		buildingsManager.AddBuilding(gridPos, builderMenu.selectedBuilding);
 	}
 
-	public void OnBuildingAdded(Building _b) { displayer.AddBuilding(_b); }
+	public void OnBuildingAdded(Building _b)
+	{
+		displayer.AddBuilding(_b);
+		enemyManager.OnBuildingAdded(_b);
+	}
+
 	public void OnBuildingRemoved(Building _b) { displayer.RemoveBuilding(_b); }
 	public void OnEnemySpawn(List<int> _indices) { tree.SubmitElements(_indices); }
 	public void OnBuildingGhostChange(string _name)

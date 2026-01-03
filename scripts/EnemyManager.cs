@@ -5,27 +5,34 @@ using System.Linq;
 
 public class EnemyManager
 {
-	public List<float> healths { get; private set; } = new();
-	public List<Vector2> positions { get; private set; } = new();
-	public List<Vector2> speeds { get; private set; } = new();
+	public class Units
+	{
+		public List<float> healths { get; private set; } = new();
+		public List<Vector2> positions { get; private set; } = new();
+		public List<Vector2> speeds { get; private set; } = new();
+		public List<int> targetIndex { get; private set; } = new();
+	}
+
+	public Units units = null;
 	public int count { get; private set; } = 0;
 	public int aliveCount { get; private set; } = 0;
 
 	private const float availableTimerStartValue = -100.0f;
 	private const float availableTimerEndValue = -80.0f; // 20 frames later
 	private GameManager gameManager = null;
+	private BuildingsManager buildingsManager = null;
 
 	// Temporary hard coded wave controls
 	private float dtAccumulator = 0.0f;
-	private float waveTimer = 5.0f;
-	private int waveSize = 10;
+	private float waveTimer = 0.5f;
+	private int waveSize = 1;
 
-	public void Initialize(GameManager _gameManager, int _numberOfUnit)
+	public void Initialize(GameManager _gameManager, BuildingsManager _buildingsManager, int _numberOfUnit)
 	{
 		gameManager = _gameManager;
+		buildingsManager = _buildingsManager;
 
-		healths.Clear();
-		positions.Clear();
+		units = new();
 
 		// Random positions
 		for(int i = 0; i < _numberOfUnit; ++i)
@@ -37,60 +44,57 @@ public class EnemyManager
 
 	private int AddNewSlot()
 	{
-		healths.Add(0.0f);
-		positions.Add(new());
-		speeds.Add(new());
+		units.healths.Add(0.0f);
+		units.positions.Add(new());
+		units.speeds.Add(new());
+		units.targetIndex.Add(-1);
 
 		return count++; // As we return the index of the slot, increase total count after
 	}
 
 	private void SetupUnit(int _id)
 	{
-		healths[_id] = 100.0f;
-		float posX = GD.Randf() * GD.Randf() * 50.0f;
-		float posY = GD.Randf() * GD.Randf() * 50.0f;
-		positions[_id] = new(posX, posY);
+		units.healths[_id] = 100.0f;
+		float posX = GD.Randf() * 50.0f;
+		float posY = GD.Randf() * 50.0f;
+		units.positions[_id] = new(posX, posY);
 
 		float speedNormal = GD.Randf() * 4.0f + 1.0f;
-		speeds[_id] = new Vector2(GD.Randf() - 0.5f, GD.Randf() - 0.5f).Normalized() * speedNormal;
+		units.speeds[_id] = new Vector2(GD.Randf() - 0.5f, GD.Randf() - 0.5f).Normalized() * speedNormal;
+
+		units.targetIndex[_id] = -1;
 	}
 
 	public void Update(double _dt)
 	{
 		float dt = (float)_dt;
 		ManageWaveSpawn(dt); // Spawn the wave before proper update to make sure the newly spawned are taken into account in aliveCount
+		FindTargets();
 
 		aliveCount = 0;
-		for(int i = 0; i < healths.Count; ++i)
+		for(int i = 0; i < units.healths.Count; ++i)
 		{
-			if(healths[i] <= 0.0)
+			if(units.healths[i] <= 0.0)
 			{
-				if(healths[i] <= availableTimerEndValue)
+				if(units.healths[i] <= availableTimerEndValue)
 				{
-					healths[i] += 1.0f; // cruise toward timer end value
+					units.healths[i] += 1.0f; // cruise toward timer end value
 				}
 				continue;
 			}
 
 			aliveCount++; // using the update to keep track of how many enemies are still alive
 
-			bool flipX = false;
-			bool flipY = false;
+			if(HasTarget(i))
+			{
+				Building target = buildingsManager.buildings[units.targetIndex[i]];
+				Vector2 targetPos = target.GetCenterPosition();
 
-			if(positions[i].X > 49.0f && speeds[i].X > 0.0f)
-				flipX = true;
-			else if(positions[i].X < 1.0f && speeds[i].X < 0.0f)
-				flipX = true;
+				if((GetPosition(i) - targetPos).LengthSquared() < 5.0f)
+					continue; // Already on target
 
-			if(positions[i].Y > 49.0f && speeds[i].Y > 0.0f)
-				flipY = true;
-			else if(positions[i].Y < 1.0f && speeds[i].Y < 0.0f)
-				flipY = true;
-
-			if(flipX || flipY)
-				speeds[i] = new(speeds[i].X * (flipX ? -1.0f : 1.0f), speeds[i].Y * (flipY ? -1.0f : 1.0f));
-
-			positions[i] += speeds[i] * dt;
+				units.positions[i] += dt * units.speeds[i];
+			}
 		}
 	}
 
@@ -124,24 +128,45 @@ public class EnemyManager
 
 	public void Damage(int _id, float _amount)
 	{
-		healths[_id] -= _amount;
+		units.healths[_id] -= _amount;
 
 		if(Alive(_id) == false)
 		{
-			healths[_id] = availableTimerStartValue; // Start timer before slot is available
+			units.healths[_id] = availableTimerStartValue; // Start timer before slot is available
 		}
 	}
 
-	public Vector2 GetPosition(int _id) { return positions[_id]; }
-	public float GetHealth(int _id) { return healths[_id]; }
-	public bool Alive(int _id) { return healths[_id] > 0.0; }
+	public Vector2 GetPosition(int _id) { return units.positions[_id]; }
+	public float GetHealth(int _id) { return units.healths[_id]; }
+	public bool Alive(int _id) { return units.healths[_id] > 0.0; }
+	public bool HasTarget(int _id) { return units.targetIndex[_id] >= 0; }
+
+	public void OnBuildingAdded(Building _newBuilding)
+	{
+		for(int i = 0; i < count; ++i)
+		{
+			if(Alive(i) == false)
+				continue;
+			if(HasTarget(i) == false)
+				continue; // this one will target a building in the regular update
+
+			Vector2 targetPos = buildingsManager.buildings[units.targetIndex[i]].GetCenterPosition();
+			Vector2 ownPos = GetPosition(i);
+
+			if((ownPos - targetPos).LengthSquared() > (ownPos - _newBuilding.GetCenterPosition()).LengthSquared())
+			{
+				// Newly placed building is closer than current target, change for it
+				SetTarget(i, _newBuilding);
+			}
+		}
+	}
 
 	private bool SlotAvailable(int _id)
 	{
 		if(Alive(_id))
 			return false;
 		// Make sure some time passed for all systems to clear their reference to this index before reusing it
-		return healths[_id] > availableTimerEndValue; // startValue < endValue, as we increase the value, we check if it's high enough
+		return units.healths[_id] > availableTimerEndValue; // startValue < endValue, as we increase the value, we check if it's high enough
 	}
 
 	private void ManageWaveSpawn(float _dt)
@@ -152,5 +177,40 @@ public class EnemyManager
 			dtAccumulator -= waveTimer;
 			Spawn(waveSize);
 		}
+	}
+
+	private void FindTargets()
+	{
+		for(int i = 0; i < count; ++i)
+		{
+			if(Alive(i) == false)
+				continue;
+			if(HasTarget(i))
+				continue;
+
+			Building closest = null;
+			float closestDistSquared = 0.0f;
+			foreach(Building candidate in buildingsManager.buildings)
+			{
+				float distSquared = (candidate.GetCenterPosition() - GetPosition(i)).LengthSquared();
+				if(closest == null || distSquared < closestDistSquared)
+				{
+					closest = candidate;
+					closestDistSquared = distSquared;
+				}
+			}
+
+			if(closest != null)
+				SetTarget(i, closest);
+		}
+	}
+
+	private void SetTarget(int _id, Building _b)
+	{
+		units.targetIndex[_id] = buildingsManager.buildings.IndexOf(_b);
+
+		// Update speed toward target, as buildings don't move just compute it once
+		float speedNorm = units.speeds[_id].Length();
+		units.speeds[_id] = (_b.GetCenterPosition() - units.positions[_id]).Normalized() * speedNorm;
 	}
 }

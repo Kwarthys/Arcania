@@ -72,7 +72,6 @@ script = ExtResource("1_gyfs4")
 [node name="GameManager" type="Node" parent="Managers" node_paths=PackedStringArray("displayer", "builderMenu")]
 script = ExtResource("1_0f027")
 BuildingsDataPath = "res://ConfigFiles/BuildingsData.json"
-drawTreeDebug = true
 displayer = NodePath("ModelsDisplayer")
 builderMenu = NodePath("../../GameUI/BuilderMenu")
 
