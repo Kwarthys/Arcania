@@ -1,7 +1,6 @@
-[gd_scene load_steps=19 format=3 uid="uid://btp0dvhkjxep"]
+[gd_scene load_steps=17 format=3 uid="uid://btp0dvhkjxep"]
 
 [ext_resource type="Script" uid="uid://d0c1dr5w4epx4" path="res://scripts/GameManager.cs" id="1_0f027"]
-[ext_resource type="Script" uid="uid://751yj3svkc4v" path="res://scripts/rotator.gd" id="1_gyfs4"]
 [ext_resource type="Script" uid="uid://dk8q0aajeogni" path="res://scripts/Utils/DrawDebugManager.cs" id="4_8mm7a"]
 [ext_resource type="Script" uid="uid://daf82iewejgfu" path="res://scripts/fpsCounter.gd" id="4_d5x1h"]
 [ext_resource type="Material" uid="uid://dq1l5k7evyam" path="res://Materials/building_construction_mat.tres" id="4_wr18j"]
@@ -23,8 +22,6 @@ size = Vector2(1000, 1000)
 
 [sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_7ycvg"]
 margin = 0.1
-
-[sub_resource type="BoxMesh" id="BoxMesh_o3jxj"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7ycvg"]
 vertex_color_use_as_albedo = true
@@ -61,11 +58,6 @@ light_energy = 1.5
 shadow_enabled = true
 directional_shadow_mode = 1
 directional_shadow_max_distance = 500.0
-
-[node name="ReferenceCube" type="MeshInstance3D" parent="Scenery"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.9349983, 0)
-mesh = SubResource("BoxMesh_o3jxj")
-script = ExtResource("1_gyfs4")
 
 [node name="Managers" type="Node" parent="."]
 

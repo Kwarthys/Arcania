@@ -1,7 +1,7 @@
 [gd_scene load_steps=2 format=3 uid="uid://bc7kuemwnk751"]
 
 [sub_resource type="PrismMesh" id="PrismMesh_mbimx"]
-size = Vector3(8, 8, 8)
+size = Vector3(4, 8, 8)
 
 [node name="Nexus" type="Node3D"]
 

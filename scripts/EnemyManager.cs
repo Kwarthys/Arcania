@@ -26,7 +26,7 @@ public class EnemyManager
 	// Temporary hard coded wave controls
 	private float dtAccumulator = 0.0f;
 	private float waveTimer = 0.5f;
-	private int waveSize = 1;
+	private int waveSize = 5;
 
 	public void Initialize(GameManager _gameManager, BuildingsManager _buildingsManager, int _numberOfUnit)
 	{
@@ -213,10 +213,29 @@ public class EnemyManager
 	{
 		units.targetIndex[_id] = buildingsManager.buildings.IndexOf(_b);
 
+		Vector2 deltaPos = _b.GetCenterPosition() - units.positions[_id];
+		Vector2 deltaNorm = deltaPos.Normalized();
+
 		// Update speed toward target, as buildings don't move just compute it once
 		float speedNorm = units.speeds[_id].Length();
-		units.speeds[_id] = (_b.GetCenterPosition() - units.positions[_id]).Normalized() * speedNorm;
+		units.speeds[_id] = deltaPos.Normalized() * speedNorm;
 
-		units.stoppingDistanceToTarget[_id] = 0.5f * _b.bbox.w * Mathf.Sqrt2; // Only working for square buildings, will do for now
+		// Compute stopping distance to touch building bbox
+		Vector2 sideNormal;
+		float fixedSize;
+		if(Mathf.Abs(deltaPos.X) / _b.bbox.w > Mathf.Abs(deltaPos.Y) / _b.bbox.h)
+		{
+			// Hit on vertical side
+			sideNormal = deltaPos.Y > 0.0f ? Vector2.Left : Vector2.Right;
+			fixedSize = _b.bbox.w * 0.5f;
+		}
+		else
+		{
+			// Hit on horizontal side
+			sideNormal = deltaPos.X > 0.0f ? Vector2.Down : Vector2.Up;
+			fixedSize = _b.bbox.h * 0.5f;
+		}
+
+		units.stoppingDistanceToTarget[_id] = fixedSize / deltaNorm.Dot(sideNormal);
 	}
 }

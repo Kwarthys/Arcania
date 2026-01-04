@@ -71,7 +71,7 @@
 		{
 			"Name": "Nexus",
 			"Buildable" : false,
-			"Footprint" : {"X":8, "Y":8},
+			"Footprint" : {"X":4, "Y":8},
 			"Weapons":
 			[
 				{
