@@ -52,19 +52,50 @@ public class BuildingsManager
 		if(grid.Available(candidate.bbox) == false)
 			return false;
 
-		buildings.Add(candidate);
-		grid.AddBuilding(buildings.Count - 1, candidate.bbox);
-		gameManager.OnBuildingAdded(buildings.Last());
+		int index = -1; // try to reuse an empty spot
+		for(int i = 0; i < buildings.Count; ++i)
+		{
+			if(buildings[i] == null)
+			{
+				index = i;
+				break;
+			}
+		}
+
+		if(index != -1)
+		{
+			buildings[index] = candidate;
+		}
+		else
+		{
+			buildings.Add(candidate);
+			index = buildings.Count - 1;
+		}
+
+		grid.AddBuilding(index, candidate.bbox);
+		gameManager.OnBuildingAdded(buildings[index]);
 		return true;
 	}
 
 	public void Update(double _dt)
 	{
+		bool oneDestroyed = false;
+
 		for(int i = 0; i < buildings.Count; ++i)
 		{
 			int index = (i + updateOffset) % buildings.Count;
+
+			if(buildings[index] == null)
+				continue; // already destroyed and marked as such
+
 			buildings[index].Update(_dt, resourcesManager, enemyManager, tree);
+
+			if(oneDestroyed == false && buildings[index].health.alive == false)
+				oneDestroyed = true; // flag to mark destroyed buildings
 		}
+
+		if(oneDestroyed)
+			CheckForDestroyedBuildings(); // At least one is down, check them all
 
 		// Make sure all buildings have the chance to access resources
 		updateOffset++;
@@ -93,5 +124,29 @@ public class BuildingsManager
 		}
 
 		return buildingsStaticData.Buildings[buildingStaticDataIndexPerBuildingName[_name]];
+	}
+
+	private void CheckForDestroyedBuildings()
+	{
+		for(int i = buildings.Count - 1; i >= 0; --i)
+		{
+			if(buildings[i] == null)
+				continue;
+
+			if(buildings[i].health.alive)
+				continue;
+
+			RemoveBuilding(i);
+		}
+	}
+
+	private void RemoveBuilding(int _index)
+	{
+		// Clear buildings grid
+		grid.ClearSlot(_index, buildings[_index].bbox);
+		// warn other components
+		gameManager.OnBuildingRemoved(buildings[_index]);
+		// remove from list -> Don't remove otherwise all other buildings will change indices
+		buildings[_index] = null;
 	}
 }

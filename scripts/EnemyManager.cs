@@ -5,16 +5,6 @@ using System.Linq;
 
 public class EnemyManager
 {
-	public class Units
-	{
-		public List<float> healths { get; private set; } = new();
-		public List<Vector2> positions { get; private set; } = new();
-		public List<Vector2> speeds { get; private set; } = new();
-		public List<int> targetIndex { get; private set; } = new();
-		public List<float> stoppingDistanceToTarget { get; private set; } = new();
-	}
-
-	public Units units = null;
 	public int count { get; private set; } = 0;
 	public int aliveCount { get; private set; } = 0;
 
@@ -25,8 +15,18 @@ public class EnemyManager
 
 	// Temporary hard coded wave controls
 	private float dtAccumulator = 0.0f;
-	private float waveTimer = 0.5f;
-	private int waveSize = 5;
+	private float waveTimer = 1.0f;
+	private int waveSize = 1;
+
+	public class Units
+	{
+		public List<float> healths { get; private set; } = new();
+		public List<Vector2> positions { get; private set; } = new();
+		public List<Vector2> speeds { get; private set; } = new();
+		public List<int> targetIndex { get; private set; } = new();
+		public List<float> stoppingDistanceToTarget { get; private set; } = new();
+	}
+	public Units units = null;
 
 	public void Initialize(GameManager _gameManager, BuildingsManager _buildingsManager, int _numberOfUnit)
 	{
@@ -95,7 +95,12 @@ public class EnemyManager
 				stoppingDistanceSquared *= stoppingDistanceSquared;
 
 				if((GetPosition(i) - targetPos).LengthSquared() < stoppingDistanceSquared)
-					continue; // Already on target
+				{
+					// Already on target
+					// Damage it !
+					target.health.Damage(0.1f);
+					continue;
+				}
 
 				units.positions[i] += dt * units.speeds[i];
 			}
@@ -165,6 +170,15 @@ public class EnemyManager
 		}
 	}
 
+	public void OnBuildingRemoved(int _buildingIndex)
+	{
+		for(int i = 0; i < count; ++i)
+		{
+			if(units.targetIndex[i] == _buildingIndex)
+				units.targetIndex[i] = -1; // Will target a new building in the next update
+		}
+	}
+
 	private bool SlotAvailable(int _id)
 	{
 		if(Alive(_id))
@@ -196,6 +210,9 @@ public class EnemyManager
 			float closestDistSquared = 0.0f;
 			foreach(Building candidate in buildingsManager.buildings)
 			{
+				if(candidate == null)
+					continue;
+
 				float distSquared = (candidate.GetCenterPosition() - GetPosition(i)).LengthSquared();
 				if(closest == null || distSquared < closestDistSquared)
 				{

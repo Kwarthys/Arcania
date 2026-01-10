@@ -5,7 +5,7 @@ using System.Linq;
 public class Building
 {
 	public BoundingBoxI bbox = new(0, 0, 1, 1);
-	public float health = 100.0f;
+	public Health health { get; private set; } = new(100.0f);
 	public List<Weapon> weapons; // Apply damage (todo effects) to enemies
 	public string buildingName { get; private set; }
 	public List<Effect> effects = new(); // only economy effects for now
@@ -15,7 +15,7 @@ public class Building
 	{
 		Building b = new();
 		b.buildingName = _staticData.Name;
-		b.health = _staticData.Health;
+		b.health = new(_staticData.Health);
 		b.bbox = new(0, 0, _staticData.Footprint.X, _staticData.Footprint.Y);
 
 		if(_staticData.Cost != null)
@@ -53,6 +53,9 @@ public class Building
 
 	public void Update(double _dt, ResourcesManager _playerResources, EnemyManager _enemyManager, QuadTree _tree)
 	{
+		if(health.alive == false)
+			return; // don't update while destructed
+
 		if(constructor != null)
 		{
 			constructor.Update(_dt, _playerResources);

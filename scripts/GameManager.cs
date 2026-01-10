@@ -108,7 +108,12 @@ public partial class GameManager : Node
 		enemyManager.OnBuildingAdded(_b);
 	}
 
-	public void OnBuildingRemoved(Building _b) { displayer.RemoveBuilding(_b); }
+	public void OnBuildingRemoved(Building _b)
+	{
+		displayer.RemoveBuilding(_b);
+		enemyManager.OnBuildingRemoved(buildingsManager.buildings.IndexOf(_b));
+	}
+
 	public void OnEnemySpawn(List<int> _indices) { tree.SubmitElements(_indices); }
 	public void OnBuildingGhostChange(string _name)
 	{

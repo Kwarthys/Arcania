@@ -30,6 +30,17 @@ public class BuildingGrid
 		}
 	}
 
+	public void ClearSlot(int index, BoundingBoxI bbox)
+	{
+		for(int j = bbox.y; j < bbox.y + bbox.h; ++j)
+		{
+			for(int i = bbox.x; i < bbox.x + bbox.w; ++i)
+			{
+				indices[CoordToIndex(i, j)] = FREE_SPACE;
+			}
+		}
+	}
+
 	public bool Available(BoundingBoxI bbox)
 	{
 		if(bbox.x < 0 || bbox.y < 0 || bbox.x + bbox.w > w || bbox.y + bbox.h > h)

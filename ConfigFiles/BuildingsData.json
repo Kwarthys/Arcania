@@ -70,6 +70,7 @@
 		},
 		{
 			"Name": "Nexus",
+			"Health": 500,
 			"Buildable" : false,
 			"Footprint" : {"X":4, "Y":8},
 			"Weapons":

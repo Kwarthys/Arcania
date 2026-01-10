@@ -118,6 +118,11 @@ public partial class BuildingsDisplayer : Node
 			models[_b].QueueFree();
 			models.Remove(_b);
 		}
+
+		if(constructingBuildings.ContainsKey(_b))
+		{
+			constructingBuildings.Remove(_b);
+		}
 	}
 
 	public void DrawTargetDebug(EnemyManager _enemyManager)
