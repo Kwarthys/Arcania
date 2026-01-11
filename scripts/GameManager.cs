@@ -7,6 +7,8 @@ public partial class GameManager : Node
 {
 	[Export] private double trimCheckTimer = 5.0;
 	[Export] private string BuildingsDataPath;
+	[Export] public int gridSize { get; private set; } = 50;
+	[Export] public int buildingGridMargin { get; private set; } = 2;
 	[Export] private bool drawTreeDebug = false;
 	[Export] private bool drawBuildingGrid = false;
 	[Export] private ModelsDisplayer displayer;
@@ -23,12 +25,12 @@ public partial class GameManager : Node
 		int n = 10;
 		enemyManager.Initialize(this, buildingsManager, n);
 
-		tree = new(new(0.0f, 0.0f, 50.0f, 50.0f), enemyManager);
+		tree = new(new(0.0f, 0.0f, gridSize, gridSize), enemyManager);
 
 		for(int i = 0; i < enemyManager.count; ++i)
 			tree.SubmitElement(i, enemyManager.GetPosition(i));
 
-		buildingsManager.Initialize(this, enemyManager, resourcesManager, tree, new(50, 50));
+		buildingsManager.Initialize(this, enemyManager, resourcesManager, tree);
 		buildingsManager.LoadData(BuildingsDataPath);
 
 		displayer.Initialize(new(tree.root.boundingBox.w * -0.5f, tree.root.boundingBox.h * -0.5f), buildingsManager.allBuildingNames);
@@ -82,13 +84,36 @@ public partial class GameManager : Node
 
 			for(int y = 0; y <= tree.root.boundingBox.h; ++y)
 			{
-				//Draw horizontal line, x = 0 to x max on Y
-				DrawDebugManager.DebugDrawLine(new Vector3(offset.X, height, offset.Y + y), new Vector3(offset.X + size.X, height, offset.Y + y));
+				if(y < buildingGridMargin || y > size.Y - buildingGridMargin)
+				{
+					if(y != 0 && y != size.Y)
+						continue;
+
+					//Draw horizontal line, x = 0 to x max on Y
+					DrawDebugManager.DebugDrawLine(new Vector3(offset.X, height, offset.Y + y), new Vector3(offset.X + size.X, height, offset.Y + y));
+				}
+				else
+				{
+					//Draw horizontal line only inside the margins
+					DrawDebugManager.DebugDrawLine(new Vector3(offset.X + buildingGridMargin, height, offset.Y + y), new Vector3(offset.X + size.X - buildingGridMargin, height, offset.Y + y));
+				}
+
 			}
 			for(int x = 0; x <= tree.root.boundingBox.w; ++x)
 			{
-				//Draw vertical line, y = 0 to y max on X
-				DrawDebugManager.DebugDrawLine(new Vector3(offset.X + x, height, offset.Y), new Vector3(offset.X + x, height, offset.Y + size.Y));
+				if(x < buildingGridMargin || x > size.X - buildingGridMargin)
+				{
+					if(x != 0 && x != size.X)
+						continue;
+
+					//Draw vertical line, y = 0 to y max on X
+					DrawDebugManager.DebugDrawLine(new Vector3(offset.X + x, height, offset.Y), new Vector3(offset.X + x, height, offset.Y + size.Y));
+				}
+				else
+				{
+					//Draw vertical line, only inside the margins
+					DrawDebugManager.DebugDrawLine(new Vector3(offset.X + x, height, offset.Y + buildingGridMargin), new Vector3(offset.X + x, height, offset.Y + size.Y - buildingGridMargin));
+				}
 			}
 		}
 	}

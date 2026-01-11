@@ -33,13 +33,14 @@ public class BuildingsManager
 		}
 	}
 
-	public void Initialize(GameManager _gameManager, EnemyManager _enemyManager, ResourcesManager _resourcesManager, QuadTree _tree, Vector2I _gridSize)
+	public void Initialize(GameManager _gameManager, EnemyManager _enemyManager, ResourcesManager _resourcesManager, QuadTree _tree)
 	{
 		gameManager = _gameManager;
 		enemyManager = _enemyManager;
 		tree = _tree;
 		resourcesManager = _resourcesManager;
-		grid.Initialize(_gridSize.X, _gridSize.Y);
+
+		grid.Initialize(_gameManager.gridSize, _gameManager.gridSize, _gameManager.buildingGridMargin);
 	}
 
 	public bool AddBuilding(Vector2I _gridPos, string _buildingName)

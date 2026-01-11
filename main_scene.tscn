@@ -64,6 +64,9 @@ directional_shadow_max_distance = 500.0
 [node name="GameManager" type="Node" parent="Managers" node_paths=PackedStringArray("displayer", "builderMenu")]
 script = ExtResource("1_0f027")
 BuildingsDataPath = "res://ConfigFiles/BuildingsData.json"
+gridSize = 100
+buildingGridMargin = 20
+drawBuildingGrid = true
 displayer = NodePath("ModelsDisplayer")
 builderMenu = NodePath("../../GameUI/BuilderMenu")
 
@@ -73,7 +76,7 @@ unitsMesh = SubResource("SphereMesh_wr18j")
 buildingModelsPath = "res://prefabs/Buildings/"
 constructionMaterial = ExtResource("4_wr18j")
 
-[node name="QuadTreeDebugManager" type="Node" parent="Managers"]
+[node name="DrawDebugManager" type="Node" parent="Managers"]
 script = ExtResource("4_8mm7a")
 debugMaterial = SubResource("StandardMaterial3D_8mm7a")
 

@@ -6,17 +6,31 @@ public class BuildingGrid
 	private int[] indices;
 	private int w;
 	private int h;
+	private int margin;
 
 	private const int FREE_SPACE = -1;
+	private const int MARGIN = -2;
 
-	public void Initialize(int _width, int _height)
+	public void Initialize(int _width, int _height, int _margin)
 	{
 		indices = new int[_width * _height];
 		w = _width;
 		h = _height;
+		margin = _margin;
 
-		for(int i = 0; i < indices.Length; ++i)
-			indices[i] = FREE_SPACE;
+		for(int y = 0; y < h; ++y)
+		{
+			for(int x = 0; x < w; ++x)
+			{
+				int i = y * w + x;
+				if(y < _margin || x < _margin || y > h - margin - 1 || x > w - margin - 1)
+					indices[i] = MARGIN;
+				else
+					indices[i] = FREE_SPACE;
+			}
+
+		}
+
 	}
 
 	public void AddBuilding(int index, BoundingBoxI bbox)
