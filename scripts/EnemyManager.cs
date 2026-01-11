@@ -15,8 +15,10 @@ public class EnemyManager
 
 	// Temporary hard coded wave controls
 	private float dtAccumulator = 0.0f;
-	private float waveTimer = 1.0f;
+	private float waveTimer = 0.5f;
 	private int waveSize = 1;
+
+	private float spawnRadius = 50.0f;
 
 	public class Units
 	{
@@ -28,19 +30,12 @@ public class EnemyManager
 	}
 	public Units units = null;
 
-	public void Initialize(GameManager _gameManager, BuildingsManager _buildingsManager, int _numberOfUnit)
+	public void Initialize(GameManager _gameManager, BuildingsManager _buildingsManager)
 	{
 		gameManager = _gameManager;
 		buildingsManager = _buildingsManager;
 
 		units = new();
-
-		// Random positions
-		for(int i = 0; i < _numberOfUnit; ++i)
-		{
-			AddNewSlot();
-			SetupUnit(i);
-		}
 	}
 
 	private int AddNewSlot()
@@ -54,12 +49,10 @@ public class EnemyManager
 		return count++; // As we return the index of the slot, increase total count after
 	}
 
-	private void SetupUnit(int _id)
+	private void SetupUnit(int _id, Vector2 _pos)
 	{
 		units.healths[_id] = 100.0f;
-		float posX = GD.Randf() * 50.0f;
-		float posY = GD.Randf() * 50.0f;
-		units.positions[_id] = new(posX, posY);
+		units.positions[_id] = _pos;
 
 		float speedNormal = GD.Randf() * 4.0f + 1.0f;
 		units.speeds[_id] = new Vector2(GD.Randf() - 0.5f, GD.Randf() - 0.5f).Normalized() * speedNormal;
@@ -98,7 +91,7 @@ public class EnemyManager
 				{
 					// Already on target
 					// Damage it !
-					target.health.Damage(0.1f);
+					// target.health.Damage(0.1f); Clipping the claws for debugging
 					continue;
 				}
 
@@ -107,26 +100,29 @@ public class EnemyManager
 		}
 	}
 
-	public void Spawn(int _amount)
+	public void Spawn(List<Vector2> _positions)
 	{
+		int amount = _positions.Count;
+		int posIndex = 0; // index of the current position to use in _positions array
+
 		// First look for already created empty slots
 		List<int> spawnedIndices = new();
 
-		for(int i = 0; i < count && spawnedIndices.Count < _amount; ++i) // while we have room to search and we did not spawn enough
+		for(int i = 0; i < count && spawnedIndices.Count < amount; ++i) // while we have room to search and we did not spawn enough
 		{
 			if(SlotAvailable(i) == false)
 				continue;
 
 			//Slot is Available
-			SetupUnit(i);
+			SetupUnit(i, _positions[posIndex++]);
 			spawnedIndices.Add(i);
 		}
 
 		// if not enough slots, create more
-		while(spawnedIndices.Count < _amount)
+		while(spawnedIndices.Count < amount)
 		{
 			int id = AddNewSlot();
-			SetupUnit(id);
+			SetupUnit(id, _positions[posIndex++]);
 			spawnedIndices.Add(id);
 		}
 
@@ -193,7 +189,26 @@ public class EnemyManager
 		if(dtAccumulator > waveTimer)
 		{
 			dtAccumulator -= waveTimer;
-			Spawn(waveSize);
+
+			List<Vector2> positions = new();
+
+			// Find a starting pos for our wave
+			float a = GD.Randf() * Mathf.Tau;
+			for(int i = 0; i < waveSize; ++i)
+			{
+				// Angle to position + distance slight variation
+				Vector2 position = new(Mathf.Cos(a), Mathf.Sin(a));
+				position *= GD.Randf() * 0.05f + 0.95f; // 5% variation
+				position *= spawnRadius;
+				position += gameManager.gridCenter;
+				positions.Add(position);
+
+				// Angle increment by a temporary fixed value
+				a += Mathf.Tau / 300.0f; // We say we put 300 units in a full circle
+			}
+
+			Spawn(positions);
+			waveSize++;
 		}
 	}
 

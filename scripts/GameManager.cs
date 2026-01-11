@@ -13,6 +13,7 @@ public partial class GameManager : Node
 	[Export] private bool drawBuildingGrid = false;
 	[Export] private ModelsDisplayer displayer;
 	[Export] private BuilderMenu builderMenu;
+	public Vector2 gridCenter { get; private set; } = Vector2.Zero;
 	private BuildingsManager buildingsManager = new();
 	private EnemyManager enemyManager = new();
 	private ResourcesManager resourcesManager = new();
@@ -22,8 +23,9 @@ public partial class GameManager : Node
 
 	public override void _Ready()
 	{
-		int n = 10;
-		enemyManager.Initialize(this, buildingsManager, n);
+		gridCenter = new Vector2(gridSize, gridSize) * 0.5f;
+
+		enemyManager.Initialize(this, buildingsManager);
 
 		tree = new(new(0.0f, 0.0f, gridSize, gridSize), enemyManager);
 
@@ -33,7 +35,7 @@ public partial class GameManager : Node
 		buildingsManager.Initialize(this, enemyManager, resourcesManager, tree);
 		buildingsManager.LoadData(BuildingsDataPath);
 
-		displayer.Initialize(new(tree.root.boundingBox.w * -0.5f, tree.root.boundingBox.h * -0.5f), buildingsManager.allBuildingNames);
+		displayer.Initialize(-gridCenter, buildingsManager.allBuildingNames);
 
 		builderMenu.Initialize(this, buildingsManager.allBuildableBuildingNames);
 

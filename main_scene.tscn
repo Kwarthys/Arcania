@@ -71,7 +71,6 @@ script = ExtResource("1_0f027")
 BuildingsDataPath = "res://ConfigFiles/BuildingsData.json"
 gridSize = 100
 buildingGridMargin = 20
-drawBuildingGrid = true
 displayer = NodePath("ModelsDisplayer")
 builderMenu = NodePath("../../GameUI/BuilderMenu")
 
