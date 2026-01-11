@@ -1,6 +1,7 @@
-[gd_scene load_steps=17 format=3 uid="uid://btp0dvhkjxep"]
+[gd_scene load_steps=18 format=3 uid="uid://btp0dvhkjxep"]
 
 [ext_resource type="Script" uid="uid://d0c1dr5w4epx4" path="res://scripts/GameManager.cs" id="1_0f027"]
+[ext_resource type="Script" uid="uid://ctq655tfpiwo6" path="res://scripts/CameraMover.cs" id="1_wr18j"]
 [ext_resource type="Script" uid="uid://dk8q0aajeogni" path="res://scripts/Utils/DrawDebugManager.cs" id="4_8mm7a"]
 [ext_resource type="Script" uid="uid://daf82iewejgfu" path="res://scripts/fpsCounter.gd" id="4_d5x1h"]
 [ext_resource type="Material" uid="uid://dq1l5k7evyam" path="res://Materials/building_construction_mat.tres" id="4_wr18j"]
@@ -49,15 +50,19 @@ physics_material_override = SubResource("PhysicsMaterial_66tet")
 [node name="InfinitePlane" type="CollisionShape3D" parent="Scenery/Floor/StaticBody3D"]
 shape = SubResource("WorldBoundaryShape3D_7ycvg")
 
-[node name="Camera3D" type="Camera3D" parent="Scenery"]
-transform = Transform3D(-1, 5.9286602e-08, -6.4248276e-08, -6.3387757e-09, 0.68380886, 0.7296612, 8.7192674e-08, 0.7296612, -0.68380886, 0, 20, -30)
-
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="Scenery"]
 transform = Transform3D(-0.6240445, -0.61793387, 0.47825152, -0.06774477, 0.65253514, 0.7547242, -0.7784471, 0.4385826, -0.44907352, 0, 19.137554, 0)
 light_energy = 1.5
 shadow_enabled = true
 directional_shadow_mode = 1
 directional_shadow_max_distance = 500.0
+
+[node name="CameraTranslater" type="Node3D" parent="Scenery"]
+script = ExtResource("1_wr18j")
+moveSpeed = 40.0
+
+[node name="Camera3D" type="Camera3D" parent="Scenery/CameraTranslater"]
+transform = Transform3D(-1, 5.9286602e-08, -6.424828e-08, -6.3387757e-09, 0.68380886, 0.7296612, 8.7192674e-08, 0.7296612, -0.68380886, 0, 20, -30)
 
 [node name="Managers" type="Node" parent="."]
 
@@ -82,7 +87,7 @@ debugMaterial = SubResource("StandardMaterial3D_8mm7a")
 
 [node name="InputManager" type="Node3D" parent="Managers" node_paths=PackedStringArray("camera", "gameManager")]
 script = ExtResource("6_nfk4m")
-camera = NodePath("../../Scenery/Camera3D")
+camera = NodePath("../../Scenery/CameraTranslater/Camera3D")
 gameManager = NodePath("../GameManager")
 
 [node name="GameUI" type="Control" parent="."]
