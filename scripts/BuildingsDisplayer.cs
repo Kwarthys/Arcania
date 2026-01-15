@@ -20,7 +20,62 @@ public partial class BuildingsDisplayer : Node
 		PreLoadBuildingsModel(_buildingNames);
 	}
 
-	public void Update()
+	public void Update(EnemyManager _enemyManager)
+	{
+		UpdateConstructingBuildings();
+		PlayBuildingsAnimations(_enemyManager);
+	}
+
+	public void AddBuilding(Building _b)
+	{
+		if(models.ContainsKey(_b) == false)
+		{
+			Node3D node = InstantiateBuildingModel(_b.buildingName);
+			if(node == null)
+			{
+				GD.PrintErr("Failed to instantiate " + _b.buildingName);
+				return;
+			}
+			models.Add(_b, node);
+			AddChild(node);
+		}
+
+		Reposition(_b);
+		MarkForConstruction(_b);
+	}
+
+	private void PlayBuildingsAnimations(EnemyManager _enemyManager)
+	{
+		foreach(KeyValuePair<Building, Node3D> pair in models)
+		{
+			if(pair.Key.constructor != null)
+				continue; // Still under construction
+
+			if(pair.Key.weapons == null)
+				continue; // only weapons are animated for now
+
+			if(pair.Value is BuildingAnimator animator)
+			{
+				List<Vector3> worldPositions = new();
+				foreach(Weapon w in pair.Key.weapons)
+				{
+					if(w.targetIndex < 0.0)
+					{
+						worldPositions.Add(new Vector3(0, -1000, 0)); // don't move
+						continue;
+					}
+
+					Vector2 targetGridPos = _enemyManager.GetPosition(w.targetIndex);
+					Vector3 targetPos = displayer.GridToWorld(targetGridPos);
+					targetPos.Y += 0.5f;
+					worldPositions.Add(targetPos);
+				}
+				animator.Update(worldPositions);
+			}
+		}
+	}
+
+	private void UpdateConstructingBuildings()
 	{
 		List<Building> toRemove = null;
 		// Manage shader for building still under construction
@@ -54,24 +109,6 @@ public partial class BuildingsDisplayer : Node
 
 			constructingBuildings.Remove(b);
 		}
-	}
-
-	public void AddBuilding(Building _b)
-	{
-		if(models.ContainsKey(_b) == false)
-		{
-			Node3D node = InstantiateBuildingModel(_b.buildingName);
-			if(node == null)
-			{
-				GD.PrintErr("Failed to instantiate " + _b.buildingName);
-				return;
-			}
-			models.Add(_b, node);
-			AddChild(node);
-		}
-
-		Reposition(_b);
-		MarkForConstruction(_b);
 	}
 
 	private void MarkForConstruction(Building _b)
@@ -122,24 +159,6 @@ public partial class BuildingsDisplayer : Node
 		if(constructingBuildings.ContainsKey(_b))
 		{
 			constructingBuildings.Remove(_b);
-		}
-	}
-
-	public void DrawTargetDebug(EnemyManager _enemyManager)
-	{
-		foreach(Building b in models.Keys)
-		{
-			if(b.weapons == null)
-				continue;
-
-			foreach(Weapon w in b.weapons)
-			{
-				if(w.targetIndex == -1)
-					continue;
-
-				Vector2 targetPos = _enemyManager.GetPosition(w.targetIndex);
-				DrawDebugManager.DebugDrawLine(models[b].Position + Vector3.Up * 7.0f, displayer.GridToWorld(targetPos) + Vector3.Up * 0.5f);
-			}
 		}
 	}
 

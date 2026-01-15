@@ -31,8 +31,7 @@ public partial class ModelsDisplayer : Node
 	public void Update(EnemyManager _enemyManager)
 	{
 		unitsDisplayer.UpdateDisplay(_enemyManager);
-		buildingsDisplayer.DrawTargetDebug(_enemyManager);
-		buildingsDisplayer.Update();
+		buildingsDisplayer.Update(_enemyManager);
 	}
 	public void AddBuilding(Building _b) { buildingsDisplayer?.AddBuilding(_b); }
 	public void RemoveBuilding(Building _b) { buildingsDisplayer?.RemoveBuilding(_b); }

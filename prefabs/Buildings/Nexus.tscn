@@ -1,12 +1,56 @@
-[gd_scene load_steps=2 format=3 uid="uid://bc7kuemwnk751"]
+[gd_scene load_steps=6 format=3 uid="uid://bc7kuemwnk751"]
+
+[ext_resource type="Script" uid="uid://4nciv8v5r41i" path="res://scripts/Visuals/BuildingAnimator.cs" id="1_kfnwy"]
 
 [sub_resource type="PrismMesh" id="PrismMesh_mbimx"]
 size = Vector3(4, 8, 8)
 
-[node name="Nexus" type="Node3D"]
+[sub_resource type="CylinderMesh" id="CylinderMesh_4uv5l"]
+height = 5.0
+radial_segments = 6
+rings = 2
+
+[sub_resource type="SphereMesh" id="SphereMesh_ejvox"]
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_y7d3f"]
+top_radius = 0.3
+bottom_radius = 0.2
+height = 1.0
+
+[node name="Nexus" type="Node3D" node_paths=PackedStringArray("weapons")]
+script = ExtResource("1_kfnwy")
+weapons = [NodePath("Body/TurretAPylon/TurretA"), NodePath("Body/TurretBPylon/TurretB")]
 
 [node name="Body" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, 0)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Body"]
 mesh = SubResource("PrismMesh_mbimx")
+
+[node name="TurretAPylon" type="MeshInstance3D" parent="Body"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 2.878)
+mesh = SubResource("CylinderMesh_4uv5l")
+
+[node name="TurretA" type="Node3D" parent="Body/TurretAPylon"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.8660793, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Body/TurretAPylon/TurretA"]
+mesh = SubResource("SphereMesh_ejvox")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="Body/TurretAPylon/TurretA"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, -0.8411517)
+mesh = SubResource("CylinderMesh_y7d3f")
+
+[node name="TurretBPylon" type="MeshInstance3D" parent="Body"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, -2.878)
+mesh = SubResource("CylinderMesh_4uv5l")
+
+[node name="TurretB" type="Node3D" parent="Body/TurretBPylon"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.8660793, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Body/TurretBPylon/TurretB"]
+mesh = SubResource("SphereMesh_ejvox")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="Body/TurretBPylon/TurretB"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, -0.8411517)
+mesh = SubResource("CylinderMesh_y7d3f")

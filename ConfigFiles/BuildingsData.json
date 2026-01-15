@@ -80,6 +80,12 @@
 					"TempDamage": 50,
 					"TempCost": { "Mana": 1.0 },
 					"TempPeriod": 4.0
+				},
+				{
+					"Range": 30,
+					"TempDamage": 50,
+					"TempCost": { "Mana": 1.0 },
+					"TempPeriod": 4.0
 				}
 			],
 			"Effects":
