@@ -39,7 +39,7 @@ public partial class GameManager : Node
 
 		builderMenu.Initialize(this, buildingsManager.allBuildableBuildingNames);
 
-		resourcesManager.Credit(new(100.0f, 0.0f, 0.0f, 0.0f)); // starting resources
+		resourcesManager.playerResources[ResourcesManager.Resource.Mana] += 100.0f; // bypass ceil
 
 		buildingsManager.AddBuilding(displayer.WorldToGrid(new(0, 0, 0)), "Nexus"); // Central starting building
 	}
@@ -52,7 +52,7 @@ public partial class GameManager : Node
 		enemyManager.Update(_dt);
 		buildingsManager.Update(_dt);
 
-		ResourceDisplayManager.Instance.Update(resourcesManager.playerResources);
+		ResourceDisplayManager.Instance.Update(resourcesManager);
 
 		/** Quad Tree Update **/
 		List<int> orphanIndices = new();

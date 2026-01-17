@@ -171,7 +171,11 @@ public partial class BuildingsDisplayer : Node
 	private void PreLoadBuildingsModel(List<string> _names)
 	{
 		foreach(string name in _names)
-			ResourceLoader.LoadThreadedRequest(BuildingNameToScene(name));
+		{
+			string path = BuildingNameToScene(name);
+			if(ResourceLoader.Exists(path))
+				ResourceLoader.LoadThreadedRequest(path);
+		}
 	}
 
 	public void MoveGhost(Vector3 _worldPos) { ghostManager.UpdateGhost(_worldPos); }
@@ -189,6 +193,12 @@ public partial class BuildingsDisplayer : Node
 		if(buildingScenesPerName.ContainsKey(_name) == false)
 		{
 			string scenePath = BuildingNameToScene(_name);
+
+			if(ResourceLoader.Exists(scenePath) == false)
+			{
+				buildingScenesPerName.Add(_name, null); // Avoid asking resource loader each time for a missing building
+				return null;
+			}
 
 			if(ResourceLoader.LoadThreadedGetStatus(scenePath) == ResourceLoader.ThreadLoadStatus.Loaded)
 			{
@@ -209,11 +219,11 @@ public partial class BuildingsDisplayer : Node
 			return null;
 
 		PackedScene buildingScene = GetBuildingScene(_name);
-		if(buildingScene == null)
-			return null;
 
-		Node3D model = buildingScene.Instantiate<Node3D>();
-		return model;
+		if(buildingScene == null)
+			return displayer.placeHolderBuildingModel.Instantiate<Node3D>();
+
+		return buildingScene.Instantiate<Node3D>();
 	}
 
 	private string BuildingNameToScene(string name) { return displayer.buildingModelsPath + "/" + name + ".tscn"; }

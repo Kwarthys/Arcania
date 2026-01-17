@@ -11,6 +11,8 @@ public class Building
 	public List<Effect> effects = new(); // only economy effects for now
 	public Constructor constructor { get; private set; }
 
+	private Price storage = null;
+
 	public static Building ConstructBuildingFromStaticData(JSONFormats.Building _staticData)
 	{
 		Building b = new();
@@ -20,9 +22,7 @@ public class Building
 
 		if(_staticData.Cost != null)
 		{
-			Price cost = new(_staticData.Cost);
-			if(cost.IsZero() == false) // Don't create constructor for free buildings
-				b.constructor = new(cost, _staticData.BuildTime);
+			b.constructor = new(new(_staticData.Cost), _staticData.BuildTime);
 		}
 
 		if(_staticData.Weapons != null)
@@ -48,6 +48,9 @@ public class Building
 			}
 		}
 
+		if(_staticData.Storage != null)
+			b.storage = new Price(_staticData.Storage);
+
 		return b;
 	}
 
@@ -61,6 +64,7 @@ public class Building
 			constructor.Update(_dt, _playerResources);
 			if(constructor.completion > 1.0f - Mathf.Epsilon)
 			{
+				OnConstructionComplete(_playerResources);
 				constructor = null; // Construction complete, remove constructor
 			}
 			return;
@@ -76,6 +80,20 @@ public class Building
 	{
 		bbox.x = _pos.X;
 		bbox.y = _pos.Y;
+	}
+
+	private void OnConstructionComplete(ResourcesManager _playerResources)
+	{
+		// Apply storage increase if needed
+		if(storage != null)
+			_playerResources.storage += storage;
+	}
+
+	public void OnDestruction(ResourcesManager _playerResources)
+	{
+		// Remove storage if needed
+		if(storage != null)
+			_playerResources.storage -= storage;
 	}
 }
 

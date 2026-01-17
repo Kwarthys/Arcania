@@ -143,6 +143,8 @@ public class BuildingsManager
 
 	private void RemoveBuilding(int _index)
 	{
+		// Clear building passive effects
+		buildings[_index].OnDestruction(resourcesManager);
 		// Clear buildings grid
 		grid.ClearSlot(_index, buildings[_index].bbox);
 		// warn other components

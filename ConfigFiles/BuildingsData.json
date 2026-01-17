@@ -73,6 +73,7 @@
 			"Health": 500,
 			"Buildable" : false,
 			"Footprint" : {"X":4, "Y":8},
+			"Storage" : {"Mana": 100, "Fire": 50, "Elec": 50, "Stone": 50},
 			"Weapons":
 			[
 				{
@@ -95,6 +96,14 @@
 					"Period": 2.0
 				}
 			]
+		},
+		{
+			"Name": "ManaStorage",
+			"Health": 200,
+			"Footprint" : {"X":3, "Y":3},
+			"Storage" : {"Mana": 200},
+			"BuildTime": 5,
+			"Cost": {"Mana": 50}
 		}
 	]
 }

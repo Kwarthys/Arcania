@@ -7,9 +7,11 @@ public class ResourcesManager
 {
 	public Price playerResources = new();
 
+	public Price storage = new();
+
 	public bool Afford(Price _p) { return playerResources.AllAboveOrEqual(_p); }
 	public void Pay(Price _p) { playerResources -= _p; }
-	public void Credit(Price _p) { playerResources += _p; }
+	public void Credit(Price _p) { playerResources += _p; playerResources.Ceil(storage); }
 
 	public bool tryPay(Price _p)
 	{

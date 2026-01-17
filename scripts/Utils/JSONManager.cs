@@ -24,11 +24,12 @@ namespace JSONFormats
 		public string Name { get; set; }
 		public float Health { get; set; }
 		public Footprint Footprint { get; set; }
-		public Cost Cost { get; set; }
+		public Cost Cost { get; set; } = new();
 		public float BuildTime { get; set; }
 		public IList<Effect> Effects { get; set; } // <- Effects applied on the building
 		public IList<Weapon> Weapons { get; set; } // <- Effects applied on enemy targets
 		public bool Buildable { get; set; } = true;
+		public Cost Storage { get; set; }
 	}
 
 	public class Cost
