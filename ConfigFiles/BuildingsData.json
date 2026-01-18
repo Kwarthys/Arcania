@@ -63,7 +63,7 @@
 			[
 				{
 					"Gain": {"Fire": 5.0},
-					"Cost": {"Mana": 50.0},
+					"Cost": {"Mana": 5.0},
 					"Period": 5.0
 				}
 			]

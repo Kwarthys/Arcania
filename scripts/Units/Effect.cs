@@ -47,13 +47,18 @@ public class Effect // Used to represent both damaging and economical powers of 
 		}
 		else
 		{
-			if(_playerResources.TryConsume(_dt, cost, period, ref costAccumulator))
+			if(costAccumulator.CanPay(cost))
 			{
-				if(costAccumulator.CanPay(cost))
+				if(_playerResources.CanStore(gain))
 				{
 					costAccumulator -= cost;
 					_playerResources.Credit(gain);
 				}
+			}
+
+			if(costAccumulator.CanPay(cost) == false) // Only consume resources if not blocked by storage limits
+			{
+				_playerResources.TryConsume(_dt, cost, period, ref costAccumulator);
 			}
 		}
 	}
