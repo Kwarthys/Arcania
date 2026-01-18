@@ -111,56 +111,17 @@ scroll_active = false
 autowrap_mode = 0
 script = ExtResource("4_d5x1h")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="GameUI" node_paths=PackedStringArray("manaText", "fireText", "elecText", "stoneText")]
+[node name="ResourceDisplayer" type="Control" parent="GameUI"]
 layout_mode = 1
-anchors_preset = 10
-anchor_right = 1.0
-offset_bottom = 23.0
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
 grow_horizontal = 2
-mouse_filter = 2
-theme_override_constants/separation = 10
-alignment = 1
 script = ExtResource("9_7ycvg")
-manaText = NodePath("RichTextLabel")
-fireText = NodePath("RichTextLabel2")
-elecText = NodePath("RichTextLabel3")
-stoneText = NodePath("RichTextLabel4")
-
-[node name="RichTextLabel" type="RichTextLabel" parent="GameUI/HBoxContainer"]
-layout_mode = 2
-mouse_filter = 2
-theme_override_colors/default_color = Color(0.78431374, 0.78431374, 1, 1)
-text = "mana"
-fit_content = true
-scroll_active = false
-autowrap_mode = 0
-
-[node name="RichTextLabel2" type="RichTextLabel" parent="GameUI/HBoxContainer"]
-layout_mode = 2
-mouse_filter = 2
-theme_override_colors/default_color = Color(1, 0.78431374, 0.78431374, 1)
-text = "fire"
-fit_content = true
-scroll_active = false
-autowrap_mode = 0
-
-[node name="RichTextLabel3" type="RichTextLabel" parent="GameUI/HBoxContainer"]
-layout_mode = 2
-mouse_filter = 2
-theme_override_colors/default_color = Color(1, 1, 0.78431374, 1)
-text = "elec"
-fit_content = true
-scroll_active = false
-autowrap_mode = 0
-
-[node name="RichTextLabel4" type="RichTextLabel" parent="GameUI/HBoxContainer"]
-layout_mode = 2
-mouse_filter = 2
-theme_override_colors/default_color = Color(0.78431374, 0.78431374, 0.78431374, 1)
-text = "stone"
-fit_content = true
-scroll_active = false
-autowrap_mode = 0
+manaColor = Color(0.5882353, 0.5882353, 1, 1)
+fireColor = Color(1, 0.5882353, 0.5882353, 1)
+elecColor = Color(1, 1, 0.5882353, 1)
+stoneColor = Color(0.5882353, 0.5882353, 0.5882353, 1)
 
 [node name="BuilderMenu" type="Control" parent="GameUI" node_paths=PackedStringArray("buttonContainer")]
 layout_mode = 1

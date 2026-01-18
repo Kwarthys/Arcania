@@ -15,7 +15,7 @@ public class EnemyManager
 
 	// Temporary hard coded wave controls
 	private float dtAccumulator = 0.0f;
-	private float waveTimer = 0.5f;
+	private float waveTimer = 50.0f;
 	private int waveSize = 1;
 
 	private float spawnRadius = 50.0f;
