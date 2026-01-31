@@ -7,7 +7,7 @@ public partial class BuildingsDisplayer : Node
 	private ModelsDisplayer displayer;
 	private Dictionary<Building, Node3D> models = new();
 
-	private BuildingGhostManager ghostManager = new();
+	private BuildingGhostManager ghostManager = null;
 
 	private Dictionary<string, PackedScene> buildingScenesPerName = new();
 
@@ -16,8 +16,11 @@ public partial class BuildingsDisplayer : Node
 	public void Initialize(ModelsDisplayer _displayer, List<string> _buildingNames)
 	{
 		displayer = _displayer;
-		ghostManager.Initialize(displayer);
 		PreLoadBuildingsModel(_buildingNames);
+
+		ghostManager = new();
+		AddChild(ghostManager);
+		ghostManager.Initialize(displayer);
 	}
 
 	public void Update(EnemyManager _enemyManager)
@@ -179,13 +182,12 @@ public partial class BuildingsDisplayer : Node
 	}
 
 	public void MoveGhost(Vector3 _worldPos) { ghostManager.UpdateGhost(_worldPos); }
+	public void PlaceGhosts(List<Vector3> _positions) { ghostManager.PlaceGhosts(_positions, InstantiateBuildingModel); }
 
 	public void ChangeGhost(string _name, bool _offsetCenter)
 	{
 		Node3D model = InstantiateBuildingModel(_name);
-		ghostManager.ChangeGhost(model, _offsetCenter);
-		if(model != null)
-			AddChild(model);
+		ghostManager.ChangeGhost(_name, model, _offsetCenter);
 	}
 
 	private PackedScene GetBuildingScene(string _name)

@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://btp0dvhkjxep"]
+[gd_scene load_steps=20 format=3 uid="uid://btp0dvhkjxep"]
 
 [ext_resource type="Script" uid="uid://d0c1dr5w4epx4" path="res://scripts/GameManager.cs" id="1_0f027"]
 [ext_resource type="Script" uid="uid://ctq655tfpiwo6" path="res://scripts/CameraMover.cs" id="1_wr18j"]
@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://bqsqqrfgx76th" path="res://prefabs/Buildings/PlaceHolder.tscn" id="5_qwutr"]
 [ext_resource type="Script" uid="uid://ch7wdu0bi0iq4" path="res://scripts/ModelsDisplayer.cs" id="6_66tet"]
 [ext_resource type="Script" uid="uid://cw638jn5oj5ce" path="res://scripts/InputManager.cs" id="6_nfk4m"]
+[ext_resource type="Script" uid="uid://dcii5dhcd4dbr" path="res://scripts/InteractionManager.cs" id="8_671wp"]
 [ext_resource type="Script" uid="uid://ddo610n3xwx14" path="res://scripts/UIManagement/ResourceDisplayManager.cs" id="9_7ycvg"]
 [ext_resource type="Script" uid="uid://bbq8kqmqc5quo" path="res://scripts/UIManagement/BuilderMenu.cs" id="10_qwutr"]
 [ext_resource type="Texture2D" uid="uid://birt34f1xwmk3" path="res://Assets/BuildingsIcon/TestIcon.png" id="10_wr18j"]
@@ -67,13 +68,14 @@ transform = Transform3D(-1, 5.9286602e-08, -6.424828e-08, -6.3387757e-09, 0.6838
 
 [node name="Managers" type="Node" parent="."]
 
-[node name="GameManager" type="Node" parent="Managers" node_paths=PackedStringArray("displayer", "builderMenu")]
+[node name="GameManager" type="Node" parent="Managers" node_paths=PackedStringArray("displayer", "builderMenu", "interactionManager")]
 script = ExtResource("1_0f027")
 BuildingsDataPath = "res://ConfigFiles/BuildingsData.json"
 gridSize = 100
 buildingGridMargin = 20
 displayer = NodePath("ModelsDisplayer")
 builderMenu = NodePath("../../GameUI/BuilderMenu")
+interactionManager = NodePath("../InteractionManager")
 
 [node name="ModelsDisplayer" type="Node" parent="Managers/GameManager"]
 script = ExtResource("6_66tet")
@@ -86,9 +88,13 @@ placeHolderBuildingModel = ExtResource("5_qwutr")
 script = ExtResource("4_8mm7a")
 debugMaterial = SubResource("StandardMaterial3D_8mm7a")
 
-[node name="InputManager" type="Node3D" parent="Managers" node_paths=PackedStringArray("camera", "gameManager")]
+[node name="InputManager" type="Node3D" parent="Managers" node_paths=PackedStringArray("camera", "interactionManager")]
 script = ExtResource("6_nfk4m")
 camera = NodePath("../../Scenery/CameraTranslater/Camera3D")
+interactionManager = NodePath("../InteractionManager")
+
+[node name="InteractionManager" type="Node" parent="Managers" node_paths=PackedStringArray("gameManager")]
+script = ExtResource("8_671wp")
 gameManager = NodePath("../GameManager")
 
 [node name="GameUI" type="Control" parent="."]

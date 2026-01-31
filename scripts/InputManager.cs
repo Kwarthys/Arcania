@@ -5,16 +5,33 @@ using System;
 public partial class InputManager : Node3D
 {
 	[Export] private Camera3D camera;
-	[Export] private GameManager gameManager;
+	[Export] private InteractionManager interactionManager;
 
 	private static InputManager Instance;
 	public override void _Ready() { Instance = this; }
 	public override void _UnhandledInput(InputEvent @event)
 	{
-		bool isMain = @event.IsActionReleased("MainInteraction");
-		if(isMain)
+
+		if(@event.IsActionPressed("MainInteraction"))
 		{
-			gameManager.AddBuilding(GetMousePosRayCast());
+			interactionManager.StartMainInteraction();
+		}
+		else if(@event.IsActionReleased("MainInteraction"))
+		{
+			interactionManager.EndMainInteraction();
+		}
+
+		if(@event.IsActionReleased("SecondaryInteraction"))
+		{
+			interactionManager.CancelInteraction();
+		}
+	}
+
+	public override void _UnhandledKeyInput(InputEvent @event)
+	{
+		if(@event.IsActionReleased("ui_cancel"))
+		{
+			interactionManager.CancelInteraction();
 		}
 	}
 

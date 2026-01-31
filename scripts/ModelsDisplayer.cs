@@ -37,6 +37,7 @@ public partial class ModelsDisplayer : Node
 	public void AddBuilding(Building _b) { buildingsDisplayer?.AddBuilding(_b); }
 	public void RemoveBuilding(Building _b) { buildingsDisplayer?.RemoveBuilding(_b); }
 	public void MoveGhost(Vector3 _worldPos) { buildingsDisplayer?.MoveGhost(_worldPos); }
+	public void PlaceGhosts(List<Vector3> _positions) { buildingsDisplayer?.PlaceGhosts(_positions); }
 	public void UpdateBuildingGhost(string _name, bool _offsetCenter) { buildingsDisplayer?.ChangeGhost(_name, _offsetCenter); }
 
 	public Vector3 GridToWorld(Vector2I _gridPos)

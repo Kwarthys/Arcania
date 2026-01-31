@@ -10,6 +10,7 @@ public partial class BuilderMenu : Control
 	private GameManager gameManager = null;
 
 	public string selectedBuilding { get; private set; } = "";
+	public JSONFormats.Building selectedBuildingStaticData = null;
 
 	public void Initialize(GameManager _gameManager, List<string> _buildingNames)
 	{
@@ -37,20 +38,7 @@ public partial class BuilderMenu : Control
 		return b;
 	}
 
-	public override void _UnhandledKeyInput(InputEvent @event)
-	{
-		if(@event.IsActionReleased("ui_cancel"))
-			OnCancel();
-	}
-
-	public override void _UnhandledInput(InputEvent @event)
-	{
-		if(@event.IsActionReleased("SecondaryInteraction"))
-			OnCancel();
-	}
-
-
-	private void OnCancel()
+	public void Cancel()
 	{
 		if(selectedBuilding == "")
 			return;
