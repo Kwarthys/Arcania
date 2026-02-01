@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
+using System.Runtime.ExceptionServices;
 
 public class BuildingsManager
 {
@@ -13,6 +14,8 @@ public class BuildingsManager
 	public List<Building> buildings { get; private set; } = new();
 	public List<string> allBuildingNames { get; private set; } = new();
 	public List<string> allBuildableBuildingNames { get; private set; } = new();
+
+	private List<ConstructionQueue> constructionQueues = new();
 
 	private int updateOffset = 0;
 
@@ -43,7 +46,20 @@ public class BuildingsManager
 		grid.Initialize(_gameManager.gridSize, _gameManager.gridSize, _gameManager.buildingGridMargin);
 	}
 
-	public bool AddBuilding(Vector2I _gridPos, string _buildingName)
+	public void CreateConstructionQueue(List<Vector2I> _pos, string _buildingName, List<Node3D> _ghosts)
+	{
+		if(_pos.Count != _ghosts.Count)
+			throw new Exception("Buildings Manager Create Construction Queue different number of Positions and Ghosts");
+
+		constructionQueues.Add(new(this));
+		for(int i = 0; i < _pos.Count; ++i)
+		{
+			constructionQueues.Last().AddItem(_pos[i], _buildingName, _ghosts[i]);
+		}
+		constructionQueues.Last().Advance();
+	}
+
+	public bool AddBuilding(Vector2I _gridPos, string _buildingName, ConstructionQueue _q = null)
 	{
 		Building candidate = Building.ConstructBuildingFromStaticData(GetBuildingStaticData(_buildingName));
 		int xCenterOffset = Mathf.FloorToInt(candidate.bbox.w * 0.5f);
@@ -73,8 +89,12 @@ public class BuildingsManager
 			index = buildings.Count - 1;
 		}
 
+		if(_q != null)
+			buildings[index].constructor.queue = _q;
+
 		grid.AddBuilding(index, candidate.bbox);
 		gameManager.OnBuildingAdded(buildings[index]);
+
 		return true;
 	}
 
@@ -127,6 +147,27 @@ public class BuildingsManager
 		return buildingsStaticData.Buildings[buildingStaticDataIndexPerBuildingName[_name]];
 	}
 
+	public void OnConstructionQueueAdvance(ConstructionQueue.BuildCommand _command, ConstructionQueue _q)
+	{
+		bool startSuccess = AddBuilding(_command.gridPos, _command.buildingName, _q);
+		_command.ghost.QueueFree();
+
+		if(startSuccess == false)
+		{
+			if(_q.GetSize() > 0)
+			{
+				_q.Advance(); // Start some recursion ehe
+				return;
+			}
+		}
+
+		for(int i = constructionQueues.Count - 1; i >= 0; --i)
+		{
+			if(constructionQueues[i].GetSize() == 0)
+				constructionQueues.RemoveAt(i);
+		}
+	}
+
 	private void CheckForDestroyedBuildings()
 	{
 		for(int i = buildings.Count - 1; i >= 0; --i)
@@ -143,6 +184,12 @@ public class BuildingsManager
 
 	private void RemoveBuilding(int _index)
 	{
+		// Advance constructionQueue if needed
+		if(buildings[_index].constructor != null && buildings[_index].constructor.queue != null)
+		{
+			// Building died while under construction and belongs to a queue, advance it
+			buildings[_index].constructor.queue.Advance();
+		}
 		// Clear building passive effects
 		buildings[_index].OnDestruction(resourcesManager);
 		// Clear buildings grid

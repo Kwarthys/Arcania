@@ -10,6 +10,12 @@ public partial class BuildingGhostManager : Node
 	private bool offsetGhostCenter = false;
 	private string buildingName = "";
 	private static Vector3 HIDDEN_POSITION = new(0.0f, -10000.0f, 0.0f);
+	private Func<string, Node3D> newModelCallback = null;
+
+	public BuildingGhostManager(Func<string, Node3D> _requestNewModel)
+	{
+		newModelCallback = _requestNewModel;
+	}
 
 	public void Initialize(ModelsDisplayer _modelsDisplayer)
 	{
@@ -19,7 +25,11 @@ public partial class BuildingGhostManager : Node
 	public void UpdateGhost(Vector3 _pos)
 	{
 		if(ghosts.Count == 0)
-			return;
+		{
+			ghosts.Add(newModelCallback(buildingName));
+			if(ghosts.Last() != null)
+				AddChild(ghosts.Last());
+		}
 
 		if(ghosts.Count > 1)
 		{
@@ -31,12 +41,12 @@ public partial class BuildingGhostManager : Node
 		ghosts[0].Position = CorrectGhostPos(_pos);
 	}
 
-	public void PlaceGhosts(List<Vector3> _positions, Func<string, Node3D> _requestNewModel)
+	public void PlaceGhosts(List<Vector3> _positions)
 	{
 		// Create missing ghosts if needed
 		while(_positions.Count > ghosts.Count)
 		{
-			ghosts.Add(_requestNewModel(buildingName));
+			ghosts.Add(newModelCallback(buildingName));
 			if(ghosts.Last() != null)
 				AddChild(ghosts.Last());
 		}
@@ -69,6 +79,22 @@ public partial class BuildingGhostManager : Node
 		}
 
 		offsetGhostCenter = _offsetCenter;
+	}
+
+	public List<Node3D> TransferGhosts(int _count)
+	{
+		if(_count > ghosts.Count)
+			throw new Exception("Ghost manager asked to transfer more ghosts than it has");
+
+		List<Node3D> returnList = [];
+
+		for(int i = 0; i < _count; ++i)
+		{
+			returnList.Add(ghosts[i]);
+		}
+
+		ghosts.RemoveRange(0, _count); // We keep them as children but won't manager their lives anymore
+		return returnList;
 	}
 
 	private Vector3 CorrectGhostPos(Vector3 _pos)

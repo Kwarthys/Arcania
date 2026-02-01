@@ -64,6 +64,7 @@ public class Building
 			constructor.Update(_dt, _playerResources);
 			if(constructor.completion > 1.0f - Mathf.Epsilon)
 			{
+				constructor.OnConstructionComplete();
 				OnConstructionComplete(_playerResources);
 				constructor = null; // Construction complete, remove constructor
 			}

@@ -18,7 +18,7 @@ public partial class BuildingsDisplayer : Node
 		displayer = _displayer;
 		PreLoadBuildingsModel(_buildingNames);
 
-		ghostManager = new();
+		ghostManager = new(InstantiateBuildingModel);
 		AddChild(ghostManager);
 		ghostManager.Initialize(displayer);
 	}
@@ -182,7 +182,8 @@ public partial class BuildingsDisplayer : Node
 	}
 
 	public void MoveGhost(Vector3 _worldPos) { ghostManager.UpdateGhost(_worldPos); }
-	public void PlaceGhosts(List<Vector3> _positions) { ghostManager.PlaceGhosts(_positions, InstantiateBuildingModel); }
+	public void PlaceGhosts(List<Vector3> _positions) { ghostManager.PlaceGhosts(_positions); }
+	public List<Node3D> TransferGhosts(int _count) { return ghostManager.TransferGhosts(_count); }
 
 	public void ChangeGhost(string _name, bool _offsetCenter)
 	{

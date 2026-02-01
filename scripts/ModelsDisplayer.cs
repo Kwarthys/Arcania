@@ -39,6 +39,7 @@ public partial class ModelsDisplayer : Node
 	public void MoveGhost(Vector3 _worldPos) { buildingsDisplayer?.MoveGhost(_worldPos); }
 	public void PlaceGhosts(List<Vector3> _positions) { buildingsDisplayer?.PlaceGhosts(_positions); }
 	public void UpdateBuildingGhost(string _name, bool _offsetCenter) { buildingsDisplayer?.ChangeGhost(_name, _offsetCenter); }
+	public List<Node3D> TransferGhosts(int _count) { return buildingsDisplayer.TransferGhosts(_count); }
 
 	public Vector3 GridToWorld(Vector2I _gridPos)
 	{

@@ -21,6 +21,7 @@ public partial class GameManager : Node
 	private EnemyManager enemyManager = new();
 	private ResourcesManager resourcesManager = new();
 	private double dtCounter = 0.0;
+	private List<Vector3> lastGhostsPositions = new();
 
 	private QuadTree tree;
 
@@ -67,11 +68,29 @@ public partial class GameManager : Node
 
 	public void ConstructBuildingOrder()
 	{
+		if(interactionManager.currentInteractionStatus != InteractionManager.InteractionStatus.Construction)
+			return;
+
 		if(builderMenu.selectedBuilding == "")
 			return;
 
-		Vector2I gridPos = displayer.WorldToGrid(InputManager.GetMousePosOnGamePlane());
-		buildingsManager.AddBuilding(gridPos, builderMenu.selectedBuilding);
+		if(interactionManager.draggingInteraction)
+		{
+			List<Node3D> ghosts = displayer.TransferGhosts(lastGhostsPositions.Count);
+			List<Vector2I> gridPositions = [];
+			foreach(Vector3 _pos in lastGhostsPositions)
+			{
+				gridPositions.Add(displayer.WorldToGrid(_pos));
+			}
+
+			buildingsManager.CreateConstructionQueue(gridPositions, builderMenu.selectedBuilding, ghosts);
+		}
+		else
+		{
+			Vector2I gridPos = displayer.WorldToGrid(InputManager.GetMousePosOnGamePlane());
+			buildingsManager.AddBuilding(gridPos, builderMenu.selectedBuilding);
+		}
+
 	}
 
 	public void OnBuildingAdded(Building _b)
@@ -142,13 +161,13 @@ public partial class GameManager : Node
 					offset.Z *= -1.0f;
 			}
 
-			List<Vector3> positions = [];
+			lastGhostsPositions.Clear();
 			for(int i = 0; i < number + 1; ++i)
 			{
-				positions.Add(interactionManager.dragStart + i * offset);
+				lastGhostsPositions.Add(interactionManager.dragStart + i * offset);
 			}
 
-			displayer.PlaceGhosts(positions);
+			displayer.PlaceGhosts(lastGhostsPositions);
 		}
 		else
 		{
